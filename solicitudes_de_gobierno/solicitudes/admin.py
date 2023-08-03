@@ -1,6 +1,6 @@
 from django.contrib import admin
-from .models import TiposDeUsuario, Usuarios
+from .models import TiposDeUsuario, Usuario
 
 # Register your models here.
 admin.site.register(TiposDeUsuario)
-admin.site.register(Usuarios)
+admin.site.register(Usuario)

@@ -12,7 +12,7 @@ class TiposDeUsuario(models.Model):
         verbose_name = "tipos de usuario"
 
 # Create your models here.
-class Usuarios(models.Model):
+class Usuario(models.Model):
     nombre = models.CharField(max_length=50, null=False)
     segundo_nombre = models.CharField(max_length=50)
     apellido = models.CharField(max_length=50, null=False)
