@@ -46,11 +46,13 @@ class TipoDeSolicitud(models.Model):
 class Solicitud(models.Model):
     tipo_solicitud_id = models.ForeignKey(
         TipoDeSolicitud, 
-        null=True
+        null=True,
+        on_delete=models.DO_NOTHING
     )
     usuario_id = models.ForeignKey(
         Usuario,
-        null=False
+        null=False,
+        on_delete=models.CASCADE
     )
     activo = models.BooleanField(null=False)
     fecha_de_creacion = models.DateField(null=False)
@@ -68,7 +70,8 @@ class Comentario(models.Model):
     activo = models.BooleanField(null=False)
     usuario_id = models.ForeignKey(
         Usuario,
-        null=False
+        null=False,
+        on_delete=models.CASCADE
     )
     fecha_de_creacion= models.DateField(null=False),
 
@@ -81,7 +84,8 @@ class Reporte(models.Model):
     activo = models.BooleanField(null=False)
     usuario_id = models.ForeignKey(
         Usuario,
-        null=False
+        null=False,
+        on_delete=models.CASCADE
     )
     fecha_de_creacion= models.DateField(null=False)
 
@@ -102,7 +106,8 @@ class HistorialDeSolicitud(models.Model):
     )
     estatus_id = models.ForeignKey(
         Estatus,
-        null=False
+        null=False,
+        on_delete=models.CASCADE
     )
     activo = models.BooleanField(null=False)
     fecha_de_creacion = models.DateField(null=False)
