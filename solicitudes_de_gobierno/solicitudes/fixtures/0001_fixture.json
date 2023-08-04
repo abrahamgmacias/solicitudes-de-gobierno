@@ -1,0 +1,31 @@
+[
+    {
+        "model": "solicitudes.tiposdeusuario",
+        "pk": 1,
+        "fields": {
+            "nombre": "Ciudadano",
+            "fecha_de_creacion": "2023-08-04"
+        }
+    },
+    {
+        "model": "solicitudes.tiposdeusuario",
+        "pk": 2,
+        "fields": {
+            "nombre": "Servidor Publico",
+            "fecha_de_creacion": "2023-08-04"
+        }
+    },
+    {
+        "model": "solicitudes.usuario",
+        "pk": 1,
+        "fields": {
+            "nombre": "Abraham",
+            "apellido": "Gonzalez",
+            "fecha_de_nacimiento": "1999-08-11",
+            "tipo_de_usuario": 1,
+            "correo_electronico": "abrahamg@hotmail.com",
+            "contrasena": "something",
+            "fecha_de_creacion": "2023-08-04"
+        }
+    }
+]
