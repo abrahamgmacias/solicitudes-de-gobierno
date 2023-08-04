@@ -19,7 +19,6 @@ class Usuario(models.Model):
     fecha_de_nacimiento = models.DateField(null=False)
     tipo_de_usuario = models.ForeignKey(
         TiposDeUsuario,
-        on_delete=models.CASCADE,
         null=False
     )
     # login_key = models.CharField()
