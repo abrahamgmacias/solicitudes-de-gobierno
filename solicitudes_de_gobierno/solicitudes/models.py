@@ -2,14 +2,14 @@ from django.db import models
 
 class TiposDeUsuario(models.Model):
     nombre = models.CharField(max_length=20, null=False)
-    activo = models.BooleanField(null=False)
+    activo = models.BooleanField(null=False, default=True)
     fecha_de_creacion = models.DateField(null=False)
 
     def __str__(self):
         return self.nombre
 
     class Meta:
-        verbose_name = "tipos de usuario"
+        verbose_name = "tipos_de_usuario"
 
 class Usuario(models.Model):
     nombre = models.CharField(max_length=50, null=False)
@@ -23,20 +23,22 @@ class Usuario(models.Model):
         null=False
     )
     # login_key = models.CharField()
-    activo = models.BooleanField(null=False)
+    correo_electronico = models.CharField(max_length=100, null=False, default="missing_email")
+    contrasena = models.CharField(null=False, default="missing_password")
+    activo = models.BooleanField(null=False, default=True)
     fecha_de_creacion = models.DateField(null=False)
 
     def __str__(self):
         return self.nombre
 
     class Meta:
-        verbose_name = "usuarios"
+        verbose_name_plural = "usuarios"
 
 
 class TipoDeSolicitud(models.Model):
     nombre = models.CharField(max_length=100, null=False)
     descripcion = models.CharField(max_length=500, null=False)
-    activo = models.BooleanField(null=False)
+    activo = models.BooleanField(null=False, default=True)
     fecha_de_creacion = models.DateField(null=False)
 
     class Meta:
@@ -44,31 +46,32 @@ class TipoDeSolicitud(models.Model):
         verbose_name_plural = "tipos_de_solicitud"
 
 class Solicitud(models.Model):
-    tipo_solicitud_id = models.ForeignKey(
+    tipo_solicitud = models.ForeignKey(
         TipoDeSolicitud, 
         null=True,
         on_delete=models.DO_NOTHING
     )
-    usuario_id = models.ForeignKey(
+    usuario = models.ForeignKey(
         Usuario,
         null=False,
         on_delete=models.CASCADE
     )
-    activo = models.BooleanField(null=False)
+    activo = models.BooleanField(null=False, default=True)
     fecha_de_creacion = models.DateField(null=False)
 
     class Meta:
+        verbose_name = "solicitud"
         verbose_name_plural = "solicitudes"
 
 class Comentario(models.Model):
-    solicitud_id = models.ForeignKey(
+    solicitud = models.ForeignKey(
         Solicitud,
         null=False,
         on_delete=models.CASCADE
     )
     texto = models.CharField(max_length=500)
-    activo = models.BooleanField(null=False)
-    usuario_id = models.ForeignKey(
+    activo = models.BooleanField(null=False, default=True)
+    usuario = models.ForeignKey(
         Usuario,
         null=False,
         on_delete=models.CASCADE
@@ -76,13 +79,13 @@ class Comentario(models.Model):
     fecha_de_creacion= models.DateField(null=False),
 
 class Reporte(models.Model):
-    solicitud_id = models.ForeignKey(
+    solicitud = models.ForeignKey(
         Solicitud,
         null=False,
         on_delete=models.CASCADE
     )
-    activo = models.BooleanField(null=False)
-    usuario_id = models.ForeignKey(
+    activo = models.BooleanField(null=False, default=True)
+    usuario = models.ForeignKey(
         Usuario,
         null=False,
         on_delete=models.CASCADE
@@ -92,24 +95,25 @@ class Reporte(models.Model):
 class Estatus(models.Model):
     nombre = models.IntegerField(null=False)
     descripcion = models.CharField(max_length=500, null=False),
-    activo = models.BooleanField(null=False)
+    activo = models.BooleanField(null=False, default=True)
     fecha_de_registro = models.DateField(null=False)
 
     class Meta:
-        verbose_name_plural = "Estatuses"
+        verbose_name = "estatus"
+        verbose_name_plural = "estatuses"
 
 class HistorialDeSolicitud(models.Model):
-    solicitud_id = models.ForeignKey(
+    solicitud = models.ForeignKey(
         Solicitud,
         null=False,
         on_delete=models.CASCADE
     )
-    estatus_id = models.ForeignKey(
+    estatus = models.ForeignKey(
         Estatus,
         null=False,
         on_delete=models.CASCADE
     )
-    activo = models.BooleanField(null=False)
+    activo = models.BooleanField(null=False, default=True)
     fecha_de_creacion = models.DateField(null=False)
 
     class Meta:
