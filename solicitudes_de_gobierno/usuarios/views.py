@@ -25,12 +25,12 @@ def registrarUsuario(request):
             )
 
             return JsonResponse(status=200, data={
-                "res": "User was registered successfully."
+                "res": "El usuario fue registrado exitosamente."
             })
 
         except:
             return JsonResponse(status=400, data={
-                "res": "Unable to register user."
+                "res": "El usuario no pudo ser registrado."
             })
         
 
@@ -41,9 +41,9 @@ def actualizarUsuario(request):
     if request.method == "PUT":
         data = json.loads(request.body.decode())
 
-        try:
+        if user_instance.exists():
             user_instance = Usuario.objects.get(correo_electronico=data['correo_electronico'])
-        except Usuario.DoesNotExist:
+        else: 
             return JsonResponse(status=404, data={
                     "res": "No se encontró un usuario con ese correo."
                 })
@@ -62,13 +62,32 @@ def actualizarUsuario(request):
 def getDataUsuario(request):
     if request.method == "GET":
         data = json.loads(request.body.decode())
-        
-        try:
-            user_instance = Usuario.objects.get(correo_electronico=data['correo_electronico'])
-            return JsonResponse(status=200, data=model_to_dict(user_instance))
 
-        except Usuario.DoesNotExist:
+        user_instance = Usuario.objects.filter(correo_electronico=data['correo_electronico'], activo=True)
+        if user_instance.exists():
+            return JsonResponse(status=200, data=model_to_dict(user_instance))
+        else: 
+            return JsonResponse(status=404, data={
+                "res": "No se encontró un usuario con ese correo."
+            })
+
+
+@csrf_exempt
+def eliminarUsuario(request):
+    if request.method == 'DELETE':
+        data = json.loads(request.body.decode())
+        
+        if user_instance.exists():
+            user_instance = Usuario.objects.get(correo_electronico=data['correo_electronico'])
+        
+        else: 
             return JsonResponse(status=404, data={
                     "res": "No se encontró un usuario con ese correo."
                 })
 
+        user_instance.activo = False
+        user_instance.save()
+
+        return JsonResponse(status=200, data={
+                    "res": "Se eliminó el usuario correctamente."
+                })
