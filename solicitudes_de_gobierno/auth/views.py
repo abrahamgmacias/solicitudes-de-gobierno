@@ -33,3 +33,25 @@ def registrarUsuario(request):
             })
         
 
+# Aplica para contrasena también
+# No funciona con el correo
+@csrf_exempt
+def cambiarDatosUsuario(request):
+    if request.method == "PUT":
+        data = json.loads(request.body.decode())
+
+        try:
+            user_instance = Usuario.objects.get(correo_electronico=data['correo_electronico'])
+        except Usuario.DoesNotExist:
+            return JsonResponse(status=404, data={
+                    "res": "No se encontró un usuario con ese correo."
+                })
+
+        for key, value in data.items():
+            setattr(user_instance, key, value)
+        
+        user_instance.save()
+
+        return JsonResponse(status=200, data={
+            "res": "Se han cambiado los datos del usuario correctamente."
+        })
