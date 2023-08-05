@@ -1,5 +1,7 @@
 /env
+/solicitudes_de_gobierno/auth/__pycache__
 /solicitudes_de_gobierno/solicitudes/__pycache__
 /solicitudes_de_gobierno/solicitudes_de_gobierno/.env
 /solicitudes_de_gobierno/solicitudes/migrations/__pycache__
+/solicitudes_de_gobierno/solicitudes_de_gobierno/__pycache__
 /solicitudes_de_gobierno/solicitudes_de_gobierno/__pycache__
