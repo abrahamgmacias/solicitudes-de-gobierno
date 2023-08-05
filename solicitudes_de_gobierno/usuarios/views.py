@@ -40,18 +40,18 @@ def registrarUsuario(request):
 def actualizarUsuario(request):
     if request.method == "PUT":
         data = json.loads(request.body.decode())
+        
+        if data["correo_electronico"] is None:
+            return JsonResponse({"res": "Se requiere del correo electronico."}, status=400)
 
-        if user_instance.exists():
-            user_instance = Usuario.objects.get(correo_electronico=data['correo_electronico'])
-        else: 
-            return JsonResponse(status=404, data={
-                    "res": "No se encontró un usuario con ese correo."
-                })
+        user_instance = Usuario.objects.filter(correo_electronico=data['correo_electronico'], activo=True)
 
         for key, value in data.items():
-            setattr(user_instance, key, value)
+            if key not in ['activo']:
+                if hasattr(Usuario, key):
+                    user_instance.update(**{key: value})
         
-        user_instance.save()
+        user_instance.first().save()
 
         return JsonResponse(status=200, data={
             "res": "Se han cambiado los datos del usuario correctamente."
@@ -65,7 +65,7 @@ def getDataUsuario(request):
 
         user_instance = Usuario.objects.filter(correo_electronico=data['correo_electronico'], activo=True)
         if user_instance.exists():
-            return JsonResponse(status=200, data=model_to_dict(user_instance))
+            return JsonResponse(status=200, data=list(user_instance.values())[0], safe=False)
         else: 
             return JsonResponse(status=404, data={
                 "res": "No se encontró un usuario con ese correo."
