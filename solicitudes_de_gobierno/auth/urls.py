@@ -4,6 +4,7 @@ from . import views
 
 urlpatterns = [
     path('sign-in', views.registrarUsuario, name='login'),
+    path('profile/update', views.cambiarDatosUsuario, name='cambiar-datos')
     # path('login/'),
     # path('sign-in/success'),
     # path('sign-in/failure'),
