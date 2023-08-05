@@ -1,6 +1,6 @@
 [
     {
-        "model": "solicitudes.tiposdeusuario",
+        "model": "usuarios.tipodeusuario",
         "pk": 1,
         "fields": {
             "nombre": "Ciudadano",
@@ -8,7 +8,7 @@
         }
     },
     {
-        "model": "solicitudes.tiposdeusuario",
+        "model": "usuarios.tipodeusuario",
         "pk": 2,
         "fields": {
             "nombre": "Servidor Publico",
@@ -16,7 +16,7 @@
         }
     },
     {
-        "model": "solicitudes.usuario",
+        "model": "usuarios.usuario",
         "pk": 1,
         "fields": {
             "nombre": "Abraham",
