@@ -20,6 +20,5 @@ from . import views
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("", views.Index, name="landing-page"),
-    path("", include('auth.urls'))
+    path("", views.Index, name="landing-page")
 ]
