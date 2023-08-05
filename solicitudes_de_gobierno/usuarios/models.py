@@ -2,7 +2,7 @@ from django.db import models
 import datetime
 
 # Create your models here.
-class TiposDeUsuario(models.Model):
+class TipoDeUsuario(models.Model):
     nombre = models.CharField(max_length=20, null=False)
     activo = models.BooleanField(null=False, default=True)
     fecha_de_creacion = models.DateField(null=False, default=datetime.date.today())
@@ -20,7 +20,7 @@ class Usuario(models.Model):
     segundo_apellido = models.CharField(max_length=50, null=False)
     fecha_de_nacimiento = models.DateField(null=False)
     tipo_de_usuario = models.ForeignKey(
-        TiposDeUsuario,
+        TipoDeUsuario,
         on_delete=models.DO_NOTHING,
         null=False
     )
