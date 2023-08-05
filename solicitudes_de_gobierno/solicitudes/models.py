@@ -1,9 +1,10 @@
 from django.db import models
+import datetime
 
 class TiposDeUsuario(models.Model):
     nombre = models.CharField(max_length=20, null=False)
     activo = models.BooleanField(null=False, default=True)
-    fecha_de_creacion = models.DateField(null=False)
+    fecha_de_creacion = models.DateField(null=False, default=datetime.date.today())
 
     def __str__(self):
         return self.nombre
@@ -13,9 +14,9 @@ class TiposDeUsuario(models.Model):
 
 class Usuario(models.Model):
     nombre = models.CharField(max_length=50, null=False)
-    segundo_nombre = models.CharField(max_length=50)
+    segundo_nombre = models.CharField(max_length=50, null=True)
     apellido = models.CharField(max_length=50, null=False)
-    segundo_apellido = models.CharField(max_length=50)
+    segundo_apellido = models.CharField(max_length=50, null=False)
     fecha_de_nacimiento = models.DateField(null=False)
     tipo_de_usuario = models.ForeignKey(
         TiposDeUsuario,
@@ -26,7 +27,7 @@ class Usuario(models.Model):
     correo_electronico = models.CharField(max_length=100, null=False, default="missing_email")
     contrasena = models.CharField(null=False, default="missing_password")
     activo = models.BooleanField(null=False, default=True)
-    fecha_de_creacion = models.DateField(null=False)
+    fecha_de_creacion = models.DateField(null=False, default=datetime.date.today())
 
     def __str__(self):
         return self.nombre
@@ -39,7 +40,7 @@ class TipoDeSolicitud(models.Model):
     nombre = models.CharField(max_length=100, null=False)
     descripcion = models.CharField(max_length=500, null=False)
     activo = models.BooleanField(null=False, default=True)
-    fecha_de_creacion = models.DateField(null=False)
+    fecha_de_creacion = models.DateField(null=False, default=datetime.date.today())
 
     class Meta:
         verbose_name = "tipo_de_solicitud"
@@ -57,7 +58,7 @@ class Solicitud(models.Model):
         on_delete=models.CASCADE
     )
     activo = models.BooleanField(null=False, default=True)
-    fecha_de_creacion = models.DateField(null=False)
+    fecha_de_creacion = models.DateField(null=False, default=datetime.date.today())
 
     class Meta:
         verbose_name = "solicitud"
@@ -76,7 +77,7 @@ class Comentario(models.Model):
         null=False,
         on_delete=models.CASCADE
     )
-    fecha_de_creacion= models.DateField(null=False),
+    fecha_de_creacion= models.DateField(null=False, default=datetime.date.today()),
 
 class Reporte(models.Model):
     solicitud = models.ForeignKey(
@@ -90,13 +91,13 @@ class Reporte(models.Model):
         null=False,
         on_delete=models.CASCADE
     )
-    fecha_de_creacion= models.DateField(null=False)
+    fecha_de_creacion= models.DateField(null=False, default=datetime.date.today())
 
 class Estatus(models.Model):
     nombre = models.IntegerField(null=False)
     descripcion = models.CharField(max_length=500, null=False),
     activo = models.BooleanField(null=False, default=True)
-    fecha_de_registro = models.DateField(null=False)
+    fecha_de_creacion = models.DateField(null=False, default=datetime.date.today())
 
     class Meta:
         verbose_name = "estatus"
@@ -114,7 +115,7 @@ class HistorialDeSolicitud(models.Model):
         on_delete=models.CASCADE
     )
     activo = models.BooleanField(null=False, default=True)
-    fecha_de_creacion = models.DateField(null=False)
+    fecha_de_creacion = models.DateField(null=False, default=datetime.date.today())
 
     class Meta:
         verbose_name = "historial_de_solicitud"
