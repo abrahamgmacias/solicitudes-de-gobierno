@@ -1,7 +1,8 @@
 import json
 from django.shortcuts import render
-from django.http import HttpResponse, JsonResponse
+from django.forms import model_to_dict
 from .models import Usuario, TipoDeUsuario
+from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
 # missing encryption
@@ -55,3 +56,19 @@ def actualizarUsuario(request):
         return JsonResponse(status=200, data={
             "res": "Se han cambiado los datos del usuario correctamente."
         })
+
+
+@csrf_exempt
+def getDataUsuario(request):
+    if request.method == "GET":
+        data = json.loads(request.body.decode())
+        
+        try:
+            user_instance = Usuario.objects.get(correo_electronico=data['correo_electronico'])
+            return JsonResponse(status=200, data=model_to_dict(user_instance))
+
+        except Usuario.DoesNotExist:
+            return JsonResponse(status=404, data={
+                    "res": "No se encontró un usuario con ese correo."
+                })
+
