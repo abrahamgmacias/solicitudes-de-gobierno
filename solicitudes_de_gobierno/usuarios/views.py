@@ -1,7 +1,7 @@
 import json
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
-from solicitudes.models import Usuario, TiposDeUsuario
+from .models import Usuario, TipoDeUsuario
 from django.views.decorators.csrf import csrf_exempt
 
 # missing encryption
@@ -9,7 +9,7 @@ from django.views.decorators.csrf import csrf_exempt
 def registrarUsuario(request):
     if request.method == 'POST': 
         data = json.loads(request.body.decode())
-        tipo_instance = TiposDeUsuario.objects.get(id=data['tipo_de_usuario'])
+        tipo_instance = TipoDeUsuario.objects.get(id=data['tipo_de_usuario'])
 
         try:
             Usuario.objects.create(
@@ -36,7 +36,7 @@ def registrarUsuario(request):
 # Aplica para contrasena también
 # No funciona con el correo
 @csrf_exempt
-def cambiarDatosUsuario(request):
+def actualizarUsuario(request):
     if request.method == "PUT":
         data = json.loads(request.body.decode())
 
