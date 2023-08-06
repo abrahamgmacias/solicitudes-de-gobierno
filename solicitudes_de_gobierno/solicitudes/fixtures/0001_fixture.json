@@ -27,5 +27,37 @@
             "contrasena": "something",
             "fecha_de_creacion": "2023-08-04"
         }
-    }
+    },
+    {
+        "model": "solicitudes.tipodesolicitud",
+        "pk": 1,
+        "fields": {
+            "nombre": "Reparación de calle",
+            "descripcion": ""
+        }
+    },
+    {
+        "model": "solicitudes.tipodesolicitud",
+        "pk": 1,
+        "fields": {
+            "nombre": "Recolección de basura",
+            "descripcion": ,
+        }
+    },
+    {
+        "model": "solicitudes.tipodesolicitud",
+        "pk": 1,
+        "fields": {
+            "nombre": "Mantenimiento de parques",
+            "descripcion": ,
+        }
+    },
+    {
+        "model": "solicitudes.tipodesolicitud",
+        "pk": 1,
+        "fields": {
+            "nombre": "Reparación de alumbrado público",
+            "descripcion": ,
+        }
+    },
 ]
