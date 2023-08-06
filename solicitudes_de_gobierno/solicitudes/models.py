@@ -2,29 +2,59 @@ from django.db import models
 from usuarios.models import Usuario
 import datetime
 
-class TipoDeSolicitud(models.Model):
-    nombre = models.CharField(max_length=100, null=False)
+class Accion(models.Model):
+    nombre = models.CharField(max_length=100, null=False, unique=True)
     descripcion = models.CharField(max_length=500, null=False)
     activo = models.BooleanField(null=False, default=True)
     fecha_de_creacion = models.DateField(null=False, default=datetime.date.today())
 
     class Meta:
-        verbose_name = "tipo_de_solicitud"
-        verbose_name_plural = "tipos_de_solicitud"
+        verbose_name_plural = "acciones"
+
+class Espacio(models.Model):
+    nombre = models.CharField(max_length=100, null=False, unique=True)
+    activo = models.BooleanField(null=False, default=True)
+    fecha_de_creacion = models.DateField(null=False, default=datetime.date.today())
+
+class Prioridad(models.Model):
+    nombre = models.CharField(max_length=100, null=False, unique=True)
+    activo = models.BooleanField(null=False, default=True)
+    fecha_de_creacion = models.DateField(null=False, default=datetime.date.today())
+
+    class Meta:
+        verbose_name_plural = "prioridades"
 
 class Solicitud(models.Model):
-    tipo_solicitud = models.ForeignKey(
-        TipoDeSolicitud, 
-        null=True,
+    accion_id = models.ForeignKey(
+        Accion,
+        null=False,
         on_delete=models.DO_NOTHING
-    )
-    usuario = models.ForeignKey(
+    ),
+    espacio_id = models.ForeignKey(
+        Espacio,
+        null=False,
+        on_delete=models.DO_NOTHING
+    ),
+    usuario_id = models.ForeignKey(
         Usuario,
         null=False,
         on_delete=models.CASCADE
-    )
+    ),
+    informacion_adicional = models.CharField(max_length=500, null=False),
+    direccion = models.CharField(max_length=200, null=False),
+    estado = models.CharField(max_length=50, null=False),
+    municipio_ciudad = models.CharField(max_length=50, null=False),
+    codigo_postal = models.IntegerField(max_length=10, null=False),
+    prioridad_id = models.ForeignKey(
+        Prioridad,
+        null=False,
+        on_delete=models.CASCADE
+    ),
     activo = models.BooleanField(null=False, default=True)
     fecha_de_creacion = models.DateField(null=False, default=datetime.date.today())
+
+    class Meta:
+        verbose_name_plural = "solicitudes"
 
     class Meta:
         verbose_name = "solicitud"
@@ -60,9 +90,9 @@ class Reporte(models.Model):
     fecha_de_creacion= models.DateField(null=False, default=datetime.date.today())
 
 class Estatus(models.Model):
-    nombre = models.IntegerField(null=False)
+    nombre = models.IntegerField(null=False, unique=True),
     descripcion = models.CharField(max_length=500, null=False),
-    activo = models.BooleanField(null=False, default=True)
+    activo = models.BooleanField(null=False, default=True),
     fecha_de_creacion = models.DateField(null=False, default=datetime.date.today())
 
     class Meta:
