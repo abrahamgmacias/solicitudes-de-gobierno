@@ -30,6 +30,7 @@ def actualizarHistorialDeSolicitud(request):
 def registrarSolicitud(request):
     if request.method == 'POST': 
         data = json.loads(request.body.decode())
+        
         accion_id = Estatus.objects.get(id=data['accion_id'])
         espacio_id = Estatus.objects.get(id=data['espacio_id'])
         usuario_id = Estatus.objects.get(id=data['usuario_id'])
