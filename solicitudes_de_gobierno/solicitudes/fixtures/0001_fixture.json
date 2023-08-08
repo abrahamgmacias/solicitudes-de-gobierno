@@ -41,28 +41,28 @@
     },
     {
         "model": "solicitudes.accion",
-        "pk": 2,
+        "pk": 1,
         "fields": {
             "nombre": "Mantenimiento"
         }
     },
     {
         "model": "solicitudes.accion",
-        "pk": 3,
+        "pk": 2,
         "fields": {
             "nombre": "Reparacion"
         }
     },
     {
         "model": "solicitudes.accion",
-        "pk": 4,
+        "pk": 3,
         "fields": {
             "nombre": "Limpieza"
         }
     },
     {
         "model": "solicitudes.accion",
-        "pk": 5,
+        "pk": 4,
         "fields": {
             "nombre": "Recolección"
         }
@@ -78,40 +78,33 @@
         "model": "solicitudes.espacio",
         "pk": 2,
         "fields": {
-            "nombre": ""
+            "nombre": "Alumbrado"
         }
     },
     {
         "model": "solicitudes.espacio",
         "pk": 3,
         "fields": {
-            "nombre": "Alumbrado"
+            "nombre": "Alcantarillas"
         }
     },
     {
         "model": "solicitudes.espacio",
         "pk": 4,
         "fields": {
-            "nombre": "Alcantarillas"
+            "nombre": "Parques"
         }
     },
     {
         "model": "solicitudes.espacio",
         "pk": 5,
         "fields": {
-            "nombre": "Parques"
-        }
-    },
-    {
-        "model": "solicitudes.espacio",
-        "pk": 6,
-        "fields": {
             "nombre": "Banquetas"
         }
     },
     {
         "model": "solicitudes.espacio",
-        "pk": 7,
+        "pk": 6,
         "fields": {
             "nombre": "Basura"
         }
