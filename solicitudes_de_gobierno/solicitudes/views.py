@@ -6,7 +6,10 @@ from django.views.decorators.csrf import csrf_exempt
 from .models import Accion, Solicitud, HistorialDeSolicitud, Estatus, Espacio, Prioridad
 
 def registrarHistorialDeSolicitud(solicitud_id, estatus_id):
-    # estatus_instance = Estatus.objects.get(estatus_id=estatus_iniciado)
+    historial_instance = HistorialDeSolicitud.objects.filter(estatus_id=estatus_id, solicitud_id=solicitud_id, activo=True)
+
+    if historial_instance.exists():
+        return
 
     return HistorialDeSolicitud.objects.create(
         estatus_id=estatus_id,
@@ -15,12 +18,33 @@ def registrarHistorialDeSolicitud(solicitud_id, estatus_id):
 
 
 @csrf_exempt
-def actualizarEstatusDeSolicitud(request, solicitud_id):
+# def actualizarEstatusDeSolicitud(request, solicitud_id):
+#     if request.method == "PUT":
+#         data = json.loads(request.body.decode())
+#         registrarHistorialDeSolicitud(solicitud_id, data["estatus_id"])
+
+#         return JsonResponse(status=200, data={"res": "Se actualizó el estatus de la solicitud correctamente."})
+
+
+@csrf_exempt
+def actualizarSolicitud(request, solicitud_id):
     if request.method == "PUT":
         data = json.loads(request.body.decode())
-        registrarHistorialDeSolicitud(solicitud_id, data["estatus_id"])
+        solicitud_instance = Solicitud.objects.filter(id=solicitud_id, activo=True)
 
-        return JsonResponse(status=200, data={"res": "Se actualizó el estatus de la solicitud correctamente."})
+        for key, value in data.items():
+            if key not in ['activo']:
+                if key == "estatus_id":
+                    registrarHistorialDeSolicitud(solicitud_id, value)
+                else: 
+                    if hasattr(Solicitud, key):
+                        solicitud_instance.update(**{key: value})
+        
+        solicitud_instance.first().save()
+
+        return JsonResponse(status=200, data={
+            "res": "La solicitud se ha actualizado correctamente."
+        })
 
 
 # Create your views here.
@@ -61,7 +85,7 @@ def registrarSolicitud(request):
 @csrf_exempt
 def getHistorialDeSolicitud(request, solicitud_id):
     if request.method == "GET":
-        historial_de_solicitudes = HistorialDeSolicitud.objects.filter(solicitud_id=solicitud_id)
+        historial_de_solicitudes = HistorialDeSolicitud.objects.filter(solicitud_id=solicitud_id, activo=True)
         historial_data = list(historial_de_solicitudes.values())
 
         return JsonResponse(status=200, data={"historial": historial_data})
