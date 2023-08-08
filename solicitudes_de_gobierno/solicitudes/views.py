@@ -5,19 +5,22 @@ from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from .models import Accion, Solicitud, HistorialDeSolicitud, Estatus, Espacio, Prioridad
 
-def registrarHistorialDeSolicitud(solicitud_id):
-    estatus_iniciado = 1
+def registrarHistorialDeSolicitud(solicitud_id, estatus_id):
     # estatus_instance = Estatus.objects.get(estatus_id=estatus_iniciado)
 
     return HistorialDeSolicitud.objects.create(
-        estatus_id=estatus_iniciado,
+        estatus_id=estatus_id,
         solicitud_id=solicitud_id,
     )
 
 
 @csrf_exempt
-def actualizarHistorialDeSolicitud(request):
-    pass
+def actualizarEstatusDeSolicitud(request, solicitud_id):
+    if request.method == "PUT":
+        data = json.loads(request.body.decode())
+        registrarHistorialDeSolicitud(solicitud_id, data["estatus_id"])
+
+        return JsonResponse(status=200, data={"res": "Se actualizó el estatus de la solicitud correctamente."})
 
 
 # Create your views here.
@@ -46,7 +49,8 @@ def registrarSolicitud(request):
             )
             solicitud.save()
 
-            registrarHistorialDeSolicitud(solicitud.id)
+            estatus_iniciado = 1
+            registrarHistorialDeSolicitud(solicitud.id, estatus_iniciado)
 
         except:
             return JsonResponse(status=400, data={"res": "No se pudo registrar la solicitud correctamente."})
