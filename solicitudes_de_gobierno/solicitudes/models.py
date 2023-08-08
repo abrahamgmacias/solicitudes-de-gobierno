@@ -4,7 +4,6 @@ import datetime
 
 class Accion(models.Model):
     nombre = models.CharField(max_length=100, null=False, unique=True)
-    descripcion = models.CharField(max_length=500, null=False)
     activo = models.BooleanField(null=False, default=True)
     fecha_de_creacion = models.DateField(null=False, default=datetime.date.today())
 
@@ -91,7 +90,6 @@ class Reporte(models.Model):
 
 class Estatus(models.Model):
     nombre = models.IntegerField(null=False, unique=True),
-    descripcion = models.CharField(max_length=500, null=False),
     activo = models.BooleanField(null=False, default=True),
     fecha_de_creacion = models.DateField(null=False, default=datetime.date.today())
 
