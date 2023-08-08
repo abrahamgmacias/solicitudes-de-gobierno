@@ -21,5 +21,6 @@ from . import views
 urlpatterns = [
     path("", views.Index, name="landing-page"),
     path("usuarios/", include("usuarios.urls")),
+    path("solicitudes/", include("solicitudes.urls")),
     path("admin/", admin.site.urls),
 ]
