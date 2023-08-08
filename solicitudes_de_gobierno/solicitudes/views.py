@@ -18,15 +18,6 @@ def registrarHistorialDeSolicitud(solicitud_id, estatus_id):
 
 
 @csrf_exempt
-# def actualizarEstatusDeSolicitud(request, solicitud_id):
-#     if request.method == "PUT":
-#         data = json.loads(request.body.decode())
-#         registrarHistorialDeSolicitud(solicitud_id, data["estatus_id"])
-
-#         return JsonResponse(status=200, data={"res": "Se actualizó el estatus de la solicitud correctamente."})
-
-
-@csrf_exempt
 def actualizarSolicitud(request, solicitud_id):
     if request.method == "PUT":
         data = json.loads(request.body.decode())
@@ -85,8 +76,15 @@ def registrarSolicitud(request):
 @csrf_exempt
 def getHistorialDeSolicitud(request, solicitud_id):
     if request.method == "GET":
-        historial_de_solicitudes = HistorialDeSolicitud.objects.filter(solicitud_id=solicitud_id, activo=True)
-        historial_data = list(historial_de_solicitudes.values())
+        historial_de_solicitudes = HistorialDeSolicitud.objects.select_related('estatus').filter(solicitud_id=solicitud_id, activo=True)
+        historial_data = list(
+            historial_de_solicitudes.values(
+                "id", "solicitud_id", "estatus", "activo", "fecha_de_creacion"
+            )
+        )
+
+        for hist, hist_data in zip(historial_de_solicitudes, historial_data):
+            hist_data["estatus"] = hist.estatus.nombre
 
         return JsonResponse(status=200, data={"historial": historial_data})
 
