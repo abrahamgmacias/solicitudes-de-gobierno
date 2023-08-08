@@ -24,40 +24,152 @@
             "fecha_de_nacimiento": "1999-08-11",
             "tipo_de_usuario": 1,
             "correo_electronico": "abrahamg@hotmail.com",
-            "contrasena": "something",
-            "fecha_de_creacion": "2023-08-04"
+            "contrasena": "something"
         }
     },
     {
-        "model": "solicitudes.tipodesolicitud",
-        "pk": 1,
+        "model": "usuarios.usuario",
+        "pk": 2,
         "fields": {
-            "nombre": "Reparación de calle",
-            "descripcion": ""
+            "nombre": "David",
+            "apellido": "Choe",
+            "fecha_de_nacimiento": "1991-02-10",
+            "tipo_de_usuario": 1,
+            "correo_electronico": "dchoe@outlook.com",
+            "contrasena": "basquiat"
         }
     },
     {
-        "model": "solicitudes.tipodesolicitud",
-        "pk": 1,
+        "model": "solicitudes.accion",
+        "pk": 2,
         "fields": {
-            "nombre": "Recolección de basura",
-            "descripcion": ,
+            "nombre": "Mantenimiento"
         }
     },
     {
-        "model": "solicitudes.tipodesolicitud",
-        "pk": 1,
+        "model": "solicitudes.accion",
+        "pk": 3,
         "fields": {
-            "nombre": "Mantenimiento de parques",
-            "descripcion": ,
+            "nombre": "Reparacion"
         }
     },
     {
-        "model": "solicitudes.tipodesolicitud",
-        "pk": 1,
+        "model": "solicitudes.accion",
+        "pk": 4,
         "fields": {
-            "nombre": "Reparación de alumbrado público",
-            "descripcion": ,
+            "nombre": "Limpieza"
         }
     },
+    {
+        "model": "solicitudes.accion",
+        "pk": 5,
+        "fields": {
+            "nombre": "Recolección"
+        }
+    },
+    {
+        "model": "solicitudes.espacio",
+        "pk": 1,
+        "fields": {
+            "nombre": "Calles"
+        }
+    },
+    {
+        "model": "solicitudes.espacio",
+        "pk": 2,
+        "fields": {
+            "nombre": ""
+        }
+    },
+    {
+        "model": "solicitudes.espacio",
+        "pk": 3,
+        "fields": {
+            "nombre": "Alumbrado"
+        }
+    },
+    {
+        "model": "solicitudes.espacio",
+        "pk": 4,
+        "fields": {
+            "nombre": "Alcantarillas"
+        }
+    },
+    {
+        "model": "solicitudes.espacio",
+        "pk": 5,
+        "fields": {
+            "nombre": "Parques"
+        }
+    },
+    {
+        "model": "solicitudes.espacio",
+        "pk": 6,
+        "fields": {
+            "nombre": "Banquetas"
+        }
+    },
+    {
+        "model": "solicitudes.espacio",
+        "pk": 7,
+        "fields": {
+            "nombre": "Basura"
+        }
+    },
+    {
+        "model": "solicitudes.estatus",
+        "pk": 1,
+        "fields": {
+            "nombre": "Iniciado"
+        }
+    },
+    {
+        "model": "solicitudes.estatus",
+        "pk": 2,
+        "fields": {
+            "nombre": "En revisión"
+        }
+    },
+    {
+        "model": "solicitudes.estatus",
+        "pk": 3,
+        "fields": {
+            "nombre": "Revisado - Aprobado"
+        }
+    },
+    {
+        "model": "solicitudes.estatus",
+        "pk": 4,
+        "fields": {
+            "nombre": "Revisado - Cancelado"
+        }
+    },
+    {
+        "model": "solicitudes.estatus",
+        "pk": 5,
+        "fields": {
+            "nombre": "Devuelto al solicitante - Faltan datos"
+        }
+    },
+    {
+        "model": "solicitudes.prioridad",
+        "pk": 1,
+        "fields": {
+            "nombre": "Baja"
+        }
+    },
+    {
+        "model": "solicitudes.prioridad",
+        "pk": 2,
+        "fields": {
+            "nombre": "Media"
+        }
+    },
+    {
+        "model": "solicitudes.prioridad",
+        "pk": 3,
+        "fields": {
+            "nombre": "Alta"
+        }
+    }
 ]
