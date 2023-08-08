@@ -89,6 +89,25 @@ def getHistorialDeSolicitud(request, solicitud_id):
         return JsonResponse(status=200, data={"historial": historial_data})
 
 
+@csrf_exempt
+def getDataSolicitud(request, solicitud_id):
+    if request.method == "GET":
+        user_instance = Solicitud.objects.select_related('accion', 'espacio', 'prioridad').filter(id=solicitud_id, activo=True)
+        user_data = list(user_instance.values(
+            'id', 'informacion_adicional', 'direccion', 'estado', 'municipio_ciudad', 'codigo_postal', 'accion', 'espacio', 'prioridad', 'fecha_de_creacion' 
+        ))[0]
+
+        if user_instance.exists():
+            user_data["accion"] = user_instance[0].accion.nombre
+            user_data["espacio"] = user_instance[0].espacio.nombre
+            user_data["prioridad"] = user_instance[0].prioridad.nombre
+
+            return JsonResponse(status=200, data=user_data, safe=False)
+
+        else: 
+            return JsonResponse(status=404, data={
+                "res": "No se encontró un a solicitud con ese ID."
+            })
 
 
 
