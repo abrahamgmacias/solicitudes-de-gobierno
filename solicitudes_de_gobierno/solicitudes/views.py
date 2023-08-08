@@ -58,6 +58,16 @@ def registrarSolicitud(request):
         return JsonResponse(status=200, data={"res": "Se registró la solicitud correctamente."})
 
 
+@csrf_exempt
+def getHistorialDeSolicitud(request, solicitud_id):
+    if request.method == "GET":
+        historial_de_solicitudes = HistorialDeSolicitud.objects.filter(solicitud_id=solicitud_id)
+        historial_data = list(historial_de_solicitudes.values())
+
+        return JsonResponse(status=200, data={"historial": historial_data})
+
+
+
 
 
 
