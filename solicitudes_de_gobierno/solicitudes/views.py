@@ -110,5 +110,22 @@ def getDataSolicitud(request, solicitud_id):
             })
 
 
+# Missing activo parameter
+@csrf_exempt
+def eliminarSolicitud(request, solicitud_id):
+    if request.method == 'DELETE':
+        solicitud_instance = Solicitud.objects.filter(id=solicitud_id, activo=True)
 
+        if solicitud_instance.exists():
+            solicitud = solicitud_instance.first()
+            solicitud.activo = False
+            solicitud.save()
 
+            return JsonResponse(status=200, data={
+                        "res": "Se eliminó la solicitud correctamente."
+                    })
+            
+        else: 
+            return JsonResponse(status=404, data={
+                    "res": "No se encontró un usuario con ese correo."
+                })
