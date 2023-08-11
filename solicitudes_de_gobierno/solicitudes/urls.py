@@ -6,5 +6,7 @@ urlpatterns = [
     path("actualizar/<int:solicitud_id>", views.actualizarSolicitud, name="actualizar-solicitud"),
     path("historial/<int:solicitud_id>", views.getHistorialDeSolicitud, name="historial-de-solicitud"),
     path("eliminar/<int:solicitud_id>", views.eliminarSolicitud, name="eliminar-solicitud"),
-    path("<int:solicitud_id>", views.getDataSolicitud, name="get-solicitud")
+    path("<int:solicitud_id>", views.getDataSolicitud, name="get-solicitud"),
+
+    path("<int:solicitud_id>/comentarios", views.manageComentarios, name="comentarios")
 ]
