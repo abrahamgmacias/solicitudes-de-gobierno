@@ -1,5 +1,6 @@
 import json
 from usuarios.models import Usuario
+from usuarios.views import validarExistenciaUsuario
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -99,45 +100,65 @@ def getHistorialDeSolicitud(request, solicitud_id):
 
 
 @csrf_exempt
-def getDataSolicitud(request, solicitud_id):
-    if request.method == "GET":
-        user_instance = Solicitud.objects.select_related('accion', 'espacio', 'prioridad').filter(id=solicitud_id, activo=True)
-        user_data = list(user_instance.values(
+def getDataSolicitud(solicitud_id):
+    solicitud = validarExistenciaSolicitud(solicitud_id)
+
+    if solicitud['exists']:
+        solicitud_instance = solicitud['solicitud'].select_related('accion', 'espacio', 'prioridad')
+        solicitud_data = list(solicitud_instance.values(
             'id', 'informacion_adicional', 'direccion', 'estado', 'municipio_ciudad', 'codigo_postal', 'accion', 'espacio', 'prioridad', 'fecha_de_creacion' 
         ))[0]
 
-        if user_instance.exists():
-            user_data["accion"] = user_instance[0].accion.nombre
-            user_data["espacio"] = user_instance[0].espacio.nombre
-            user_data["prioridad"] = user_instance[0].prioridad.nombre
+        solicitud_data["accion"] = solicitud_instance[0].accion.nombre
+        solicitud_data["espacio"] = solicitud_instance[0].espacio.nombre
+        solicitud_data["prioridad"] = solicitud_instance[0].prioridad.nombre
 
-            return JsonResponse(status=200, data=user_data, safe=False)
+        return JsonResponse(status=200, data=solicitud_data, safe=False)
 
-        else: 
-            return JsonResponse(status=404, data={
-                "res": "No se encontró un a solicitud con ese ID."
-            })
+    else:
+        return JsonResponse(status=404, data={"res": solicitud["res"]})
 
 
 # Add a ?complete
 @csrf_exempt
-def eliminarSolicitud(request, solicitud_id):
-    if request.method == 'DELETE':
-        solicitud_instance = Solicitud.objects.filter(id=solicitud_id, activo=True)
+def eliminarSolicitud(solicitud_id):
+    solicitud = validarExistenciaSolicitud(solicitud_id)
 
-        if solicitud_instance.exists():
-            solicitud = solicitud_instance.first()
-            solicitud.activo = False
-            solicitud.save()
+    if solicitud['exists']:
+        solicitud_instance = solicitud['solicitud'].first()
+        solicitud_instance.activo = False
+        solicitud_instance.save()
 
-            return JsonResponse(status=200, data={
-                        "res": "Se eliminó la solicitud correctamente."
-                    })
+        return JsonResponse(status=200, data={"res": "Se eliminó la solicitud correctamente."})
             
-        else: 
-            return JsonResponse(status=404, data={
-                    "res": "No se encontró un usuario con ese correo."
-                })
+    else: 
+        return JsonResponse(status=404, data={"res": "No se encontró un usuario con ese correo."})
+
+
+def manageSolicitud(request, solicitud_id):
+    try:
+        data = json.loads(request.body.decode())
+    except:
+        pass
+
+    if request.method == "GET":
+        response = getDataSolicitud(solicitud_id)
+
+    if request.method == "POST":
+        pass
+
+    if request.method == "PUT":
+        pass
+    
+    if request.method == "DELETE":
+        response = eliminarSolicitud(solicitud_id)
+
+    return response
+
+
+
+
+
 
 
 def agregarComentario(data, solicitud_id):
