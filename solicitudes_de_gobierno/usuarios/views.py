@@ -5,6 +5,14 @@ from .models import Usuario, TipoDeUsuario
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
+def validarExistenciaUsuario(usuario_id):
+    usuario_instance = Usuario.objects.filter(id=usuario_id, activo=True)
+
+    if usuario_instance.exists():
+        return {'solicitud': usuario_instance, 'exists': True}
+    else:
+        return {'solicitud': None, 'exists': False, 'res': "No existe usuario activo con esa ID."}
+
 # missing encryption
 @csrf_exempt
 def registrarUsuario(request):
