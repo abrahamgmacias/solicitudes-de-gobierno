@@ -77,17 +77,19 @@ def eliminarUsuario(request):
     if request.method == 'DELETE':
         data = json.loads(request.body.decode())
         
+        user_instance = Usuario.objects.get(correo_electronico=data['correo_electronico'])
+
         if user_instance.exists():
-            user_instance = Usuario.objects.get(correo_electronico=data['correo_electronico'])
-        
+            user_instance.activo = False
+            user_instance.save()
+
+            return JsonResponse(status=200, data={
+                        "res": "Se eliminó el usuario correctamente."
+                    })
+            
         else: 
             return JsonResponse(status=404, data={
                     "res": "No se encontró un usuario con ese correo."
                 })
 
-        user_instance.activo = False
-        user_instance.save()
-
-        return JsonResponse(status=200, data={
-                    "res": "Se eliminó el usuario correctamente."
-                })
+        
