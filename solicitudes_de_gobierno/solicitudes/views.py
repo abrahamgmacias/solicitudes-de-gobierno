@@ -51,36 +51,28 @@ def actualizarSolicitud(data, solicitud_id):
   
 # Create your views here.
 # Incluir API 
-def registrarSolicitud(request):
-    if request.method == 'POST': 
-        data = json.loads(request.body.decode())
+def registrarSolicitud(data):
+    try:
+        solicitud = Solicitud.objects.create(
+            accion_id=data['accion_id'],
+            espacio_id=data['espacio_id'],
+            usuario_id=data['usuario_id'],
+            informacion_adicional=data['informacion_adicional'],
+            direccion=data['direccion'],
+            estado=data['estado'],
+            municipio_ciudad=data['municipio_ciudad'],
+            codigo_postal=data['codigo_postal'],
+            prioridad_id=data['prioridad_id'],
+        )
+        solicitud.save()
 
-        # accion_instance = Accion.objects.get(id=data['accion_id'])
-        # espacio_instance = Espacio.objects.get(id=data['espacio_id'])
-        # usuario_instance = Usuario.objects.get(id=data['usuario_id'])
-        # prioridad_instance = Prioridad.objects.get(id=data['prioridad_id'])
+        estatus_iniciado = 1
+        registrarHistorialDeSolicitud(solicitud.id, estatus_iniciado)
 
-        try:
-            solicitud = Solicitud.objects.create(
-                accion_id=data['accion_id'],
-                espacio_id=data['espacio_id'],
-                usuario_id=data['usuario_id'],
-                informacion_adicional=data['informacion_adicional'],
-                direccion=data['direccion'],
-                estado=data['estado'],
-                municipio_ciudad=data['municipio_ciudad'],
-                codigo_postal=data['codigo_postal'],
-                prioridad_id=data['prioridad_id'],
-            )
-            solicitud.save()
-
-            estatus_iniciado = 1
-            registrarHistorialDeSolicitud(solicitud.id, estatus_iniciado)
-
-        except:
-            return JsonResponse(status=400, data={"res": "No se pudo registrar la solicitud correctamente."})
+    except:
+        return JsonResponse(status=400, data={"res": "No se pudo registrar la solicitud correctamente."})
             
-        return JsonResponse(status=200, data={"res": "Se registró la solicitud correctamente."})
+    return JsonResponse(status=200, data={"res": "Se registró la solicitud correctamente."})
 
 
 def getHistorialDeSolicitud(request, solicitud_id):
@@ -142,7 +134,7 @@ def manageSolicitudes(request, solicitud_id):
         response = getDataSolicitud(solicitud_id)
 
     if request.method == "POST":
-        pass
+        response = registrarSolicitud(data)
 
     if request.method == "PUT":
         response = actualizarSolicitud(data, solicitud_id)
