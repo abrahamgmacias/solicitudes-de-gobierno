@@ -8,6 +8,6 @@ urlpatterns = [
     # path("eliminar/<int:solicitud_id>", views.eliminarSolicitud, name="eliminar-solicitud"),
     # path("<int:solicitud_id>", views.getDataSolicitud, name="get-solicitud"),
 
-    path("<int:solicitud_id>", views.manageSolicitud, name="solicitud"),
+    path("<int:solicitud_id>", views.manageSolicitudes, name="solicitudes"),
     path("<int:solicitud_id>/comentarios", views.manageComentarios, name="comentarios")
 ]
