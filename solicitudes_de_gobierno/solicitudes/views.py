@@ -161,7 +161,30 @@ def agregarComentario(data, solicitud_id):
         return JsonResponse(data={'res': solicitud_instance["res"]}, status=400)
 
 
+def validarExistenciaComentario(comentario_id):
+    comentario_instance = Comentario.objects.filter(id=comentario_id, activo=True)
 
+    if comentario_instance.exists():
+        return {'comentario': comentario_instance, 'exists': True}
+    else:
+        return {'comentario': None, 'exists': False, 'res': "No existe solicitud activa con esa ID."}
+
+
+def eliminarComentario(comentario_id):
+    comentario = validarExistenciaComentario(comentario_id)
+
+    if comentario["exists"]:
+        try:
+            comentario_instance = comentario["comentario"].first()
+            comentario_instance.activo = False
+            comentario_instance.save()
+            
+            return JsonResponse(data={'res': 'El comentario fue eliminado con exito.'}, status=200)
+
+        except:
+            return JsonResponse(data={'res': 'El comentario no pudo ser eliminado.'}, status=400)
+
+    return JsonResponse(data={'res': comentario["res"]}, status=400)
 
 
 @csrf_exempt
