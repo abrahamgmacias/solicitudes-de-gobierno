@@ -27,11 +27,11 @@ def registrarHistorialDeSolicitud(solicitud_id, estatus_id):
     )
 
 
-@csrf_exempt
-def actualizarSolicitud(request, solicitud_id):
-    if request.method == "PUT":
-        data = json.loads(request.body.decode())
-        solicitud_instance = Solicitud.objects.filter(id=solicitud_id, activo=True)
+def actualizarSolicitud(data, solicitud_id):
+    solicitud = validarExistenciaSolicitud(solicitud_id)
+
+    if solicitud["exists"]:
+        solicitud_instance = solicitud["solicitud"]
 
         for key, value in data.items():
             if key not in ['activo']:
@@ -40,17 +40,17 @@ def actualizarSolicitud(request, solicitud_id):
                 else: 
                     if hasattr(Solicitud, key):
                         solicitud_instance.update(**{key: value})
-        
+            
         solicitud_instance.first().save()
 
-        return JsonResponse(status=200, data={
-            "res": "La solicitud se ha actualizado correctamente."
-        })
+        return JsonResponse(status=200, data={"res": "La solicitud se ha actualizado correctamente."})
 
+    else:
+        return JsonResponse(status=400, data={'res': solicitud['res']})
 
+  
 # Create your views here.
 # Incluir API 
-@csrf_exempt
 def registrarSolicitud(request):
     if request.method == 'POST': 
         data = json.loads(request.body.decode())
@@ -83,7 +83,6 @@ def registrarSolicitud(request):
         return JsonResponse(status=200, data={"res": "Se registró la solicitud correctamente."})
 
 
-@csrf_exempt
 def getHistorialDeSolicitud(request, solicitud_id):
     if request.method == "GET":
         historial_de_solicitudes = HistorialDeSolicitud.objects.select_related('estatus').filter(solicitud_id=solicitud_id, activo=True)
@@ -99,7 +98,6 @@ def getHistorialDeSolicitud(request, solicitud_id):
         return JsonResponse(status=200, data={"historial": historial_data})
 
 
-@csrf_exempt
 def getDataSolicitud(solicitud_id):
     solicitud = validarExistenciaSolicitud(solicitud_id)
 
@@ -119,8 +117,6 @@ def getDataSolicitud(solicitud_id):
         return JsonResponse(status=404, data={"res": solicitud["res"]})
 
 
-# Add a ?complete
-@csrf_exempt
 def eliminarSolicitud(solicitud_id):
     solicitud = validarExistenciaSolicitud(solicitud_id)
 
@@ -135,7 +131,8 @@ def eliminarSolicitud(solicitud_id):
         return JsonResponse(status=404, data={"res": "No se encontró un usuario con ese correo."})
 
 
-def manageSolicitud(request, solicitud_id):
+@csrf_exempt
+def manageSolicitudes(request, solicitud_id):
     try:
         data = json.loads(request.body.decode())
     except:
@@ -148,7 +145,7 @@ def manageSolicitud(request, solicitud_id):
         pass
 
     if request.method == "PUT":
-        pass
+        response = actualizarSolicitud(data, solicitud_id)
     
     if request.method == "DELETE":
         response = eliminarSolicitud(solicitud_id)
