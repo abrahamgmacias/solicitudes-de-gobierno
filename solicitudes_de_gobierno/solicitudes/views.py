@@ -187,6 +187,23 @@ def eliminarComentario(comentario_id):
     return JsonResponse(data={'res': comentario["res"]}, status=400)
 
 
+def actualizarComentario(data, comentario_id):
+    comentario = validarExistenciaComentario(comentario_id)
+
+    if comentario["exists"]:
+        try:
+            comentario_instance = comentario["comentario"].first()
+            comentario_instance.texto = data["texto"]
+            comentario_instance.save()
+            
+            return JsonResponse(data={'res': 'El comentario fue actualizado con exito.'}, status=200)
+
+        except:
+            return JsonResponse(data={'res': 'El comentario no pudo ser actualizado.'}, status=400)
+
+    return JsonResponse(data={'res': comentario["res"]}, status=400)
+
+
 @csrf_exempt
 def manageComentarios(request, solicitud_id):
     try:
@@ -200,5 +217,9 @@ def manageComentarios(request, solicitud_id):
     if request.method == "DELETE":
         comentario_id = request.GET.get('id')
         response = eliminarComentario(comentario_id)
+
+    if request.method == "PUT":
+        comentario_id = request.GET.get('id')
+        response = actualizarComentario(data, comentario_id)
 
     return response
