@@ -3,7 +3,16 @@ from usuarios.models import Usuario
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from .models import Accion, Solicitud, HistorialDeSolicitud, Estatus, Espacio, Prioridad
+from .models import Accion, Solicitud, HistorialDeSolicitud, Estatus, Espacio, Prioridad, Comentario
+
+def validarExistenciaSolicitud(solicitud_id):
+    solicitud_instance = Solicitud.objects.filter(id=solicitud_id, activo=True)
+
+    if solicitud_instance.exists():
+        return {'solicitud': solicitud_instance, 'exists': True}
+    else:
+        return {'solicitud': None, 'exists': False, 'res': "No existe solicitud activa con esa ID."}
+
 
 def registrarHistorialDeSolicitud(solicitud_id, estatus_id):
     historial_instance = HistorialDeSolicitud.objects.filter(estatus_id=estatus_id, solicitud_id=solicitud_id, activo=True)
@@ -110,7 +119,7 @@ def getDataSolicitud(request, solicitud_id):
             })
 
 
-# Missing activo parameter
+# Add a ?complete
 @csrf_exempt
 def eliminarSolicitud(request, solicitud_id):
     if request.method == 'DELETE':
@@ -129,3 +138,44 @@ def eliminarSolicitud(request, solicitud_id):
             return JsonResponse(status=404, data={
                     "res": "No se encontró un usuario con ese correo."
                 })
+
+
+def agregarComentario(data, solicitud_id):
+    solicitud_instance = validarExistenciaSolicitud(solicitud_id)
+
+    if solicitud_instance["exists"]:
+        try:
+            comentario = Comentario.objects.create(
+                solicitud_id=solicitud_id,
+                texto=data["texto"],
+                usuario_id=data["usuario_id"]
+            )
+            comentario.save()
+
+            return JsonResponse(data={"res": 'Se registró el comentario exitosamente.'}, status=200,)
+
+        except: 
+            return JsonResponse(data={"res": "No se pudo registrar el comentario. Intente de nuevo."}, status=400)
+
+    else: 
+        return JsonResponse(data={'res': solicitud_instance["res"]}, status=400)
+
+
+
+
+
+@csrf_exempt
+def manageComentarios(request, solicitud_id):
+    try:
+        data = json.loads(request.body.decode())
+    except:
+        pass
+
+    if request.method == "POST":
+        response = agregarComentario(data, solicitud_id)
+
+    if request.method == "DELETE":
+        comentario_id = request.GET.get('id')
+        response = eliminarComentario(comentario_id)
+
+    return response
