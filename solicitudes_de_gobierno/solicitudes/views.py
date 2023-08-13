@@ -13,11 +13,16 @@ def getMisSolicitudes(request):
     # Display none if none, display JSON if some, for now
     solicitudes = getSolicitudesDeUsuario(sample_user_id)
 
-    return render(request, 'solicitudes.html', {'solicitudes_list': solicitudes['data'], 'res': solicitudes['res']})
+    solicitudes_titulos = []
+    for solicitud in solicitudes['data']:
+        solicitudes_titulos += [formatTituloSolicitud(solicitud)]
 
-@csrf_exempt
+    return render(request, 'solicitudes.html', {'solicitudes_titulos': solicitudes_titulos, 'res': solicitudes['res']})
+
+
+# Add sort
 def getSolicitudesDeUsuario(usuario_id):
-    usuario = validarExistenciaUsuario(1)
+    usuario = validarExistenciaUsuario(usuario_id)
 
     if usuario['exists']:
         solicitud_instances = Solicitud.objects.select_related('accion', 'espacio', 'prioridad').filter(usuario_id=usuario_id, activo=True)
@@ -39,6 +44,13 @@ def getSolicitudesDeUsuario(usuario_id):
 
     else:
        return {'res': usuario['res']}
+
+
+def formatTituloSolicitud(solicitud_data):
+    return f"ID: {solicitud_data['id']} - {solicitud_data['accion']} {solicitud_data['espacio']} - {solicitud_data['municipio_ciudad']}, {solicitud_data['estado']} - {solicitud_data['fecha_de_creacion']}"
+
+def createNombreTicket(solicitud_data):
+    pass
 
 
 def validarExistenciaSolicitud(solicitud_id):
