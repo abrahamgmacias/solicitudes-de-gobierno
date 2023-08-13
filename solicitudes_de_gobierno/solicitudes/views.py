@@ -6,7 +6,7 @@ from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from .models import Solicitud, HistorialDeSolicitud, Comentario
 
-def getMisSolicitudes(request):
+def misSolicitudesView(request):
     # Query user solicitudes
     sample_user_id = 1
 
@@ -18,6 +18,35 @@ def getMisSolicitudes(request):
         solicitudes_titulos += [formatTituloSolicitud(solicitud)]
 
     return render(request, 'solicitudes.html', {'solicitudes_titulos': solicitudes_titulos, 'res': solicitudes['res']})
+
+
+def solicitudView(request):
+    sample_user_id = 1
+    solicitud_data = getDataSolicitud(sample_user_id)
+    solicitud_historial = getHistorialDeSolicitud(sample_user_id)
+
+    return render(request, 'solicitudes.html')
+
+
+def manageSolicitudes(request, solicitud_id):
+    try:
+        data = json.loads(request.body.decode())
+    except:
+        pass
+
+    if request.method == "GET":
+        response = getDataSolicitud(solicitud_id)
+
+    # if request.method == "POST":
+    #     response = registrarSolicitud(data)
+
+    if request.method == "PUT":
+        response = actualizarSolicitud(data, solicitud_id)
+    
+    if request.method == "DELETE":
+        response = eliminarSolicitud(solicitud_id)
+
+    return response
 
 
 # Add sort
@@ -168,27 +197,6 @@ def eliminarSolicitud(solicitud_id):
     else: 
         return JsonResponse(status=404, data={"res": "No se encontró un usuario con ese correo."})
 
-
-@csrf_exempt
-def manageSolicitudes(request, solicitud_id):
-    try:
-        data = json.loads(request.body.decode())
-    except:
-        pass
-
-    if request.method == "GET":
-        response = getDataSolicitud(solicitud_id)
-
-    if request.method == "POST":
-        response = registrarSolicitud(data)
-
-    if request.method == "PUT":
-        response = actualizarSolicitud(data, solicitud_id)
-    
-    if request.method == "DELETE":
-        response = eliminarSolicitud(solicitud_id)
-
-    return response
 
 
 
