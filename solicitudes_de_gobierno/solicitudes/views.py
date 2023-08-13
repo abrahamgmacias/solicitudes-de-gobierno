@@ -6,10 +6,39 @@ from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from .models import Solicitud, HistorialDeSolicitud, Comentario
 
-def verMisSolicitudes(request):
+def getMisSolicitudes(request):
+    # Query user solicitudes
+    sample_user_id = 1
 
+    # Display none if none, display JSON if some, for now
+    solicitudes = getSolicitudesDeUsuario(sample_user_id)
 
-    return render(request, 'solicitudes.html')
+    return render(request, 'solicitudes.html', {'solicitudes_list': solicitudes['data'], 'res': solicitudes['res']})
+
+@csrf_exempt
+def getSolicitudesDeUsuario(usuario_id):
+    usuario = validarExistenciaUsuario(1)
+
+    if usuario['exists']:
+        solicitud_instances = Solicitud.objects.select_related('accion', 'espacio', 'prioridad').filter(usuario_id=usuario_id, activo=True)
+
+        if solicitud_instances.exists():
+            solicitudes_data = list(solicitud_instances.values(
+                'id', 'informacion_adicional', 'direccion', 'estado', 'municipio_ciudad', 'codigo_postal', 'accion', 'espacio', 'prioridad', 'fecha_de_creacion'
+            ))
+
+            for solicitud_instance, solicitud_data in zip(solicitud_instances, solicitudes_data):
+                solicitud_data["accion"] = solicitud_instance.accion.nombre
+                solicitud_data["espacio"] = solicitud_instance.espacio.nombre
+                solicitud_data["prioridad"] = solicitud_instance.prioridad.nombre
+
+            return {'res': f'Tienes {len(solicitud_data)} solicitudes activas.', 'data': solicitudes_data}
+
+        else:
+            return {'res': 'No tienes solicitudes activas', 'data': None}
+
+    else:
+       return {'res': usuario['res']}
 
 
 def validarExistenciaSolicitud(solicitud_id):
@@ -54,8 +83,7 @@ def actualizarSolicitud(data, solicitud_id):
     else:
         return JsonResponse(status=400, data={'res': solicitud['res']})
 
-  
-# Create your views here.
+
 # Incluir API 
 def registrarSolicitud(data):
     try:
