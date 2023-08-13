@@ -4,7 +4,13 @@ from usuarios.views import validarExistenciaUsuario
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from .models import Accion, Solicitud, HistorialDeSolicitud, Estatus, Espacio, Prioridad, Comentario
+from .models import Solicitud, HistorialDeSolicitud, Comentario
+
+def verMisSolicitudes(request):
+
+
+    return render(request, 'solicitudes.html')
+
 
 def validarExistenciaSolicitud(solicitud_id):
     solicitud_instance = Solicitud.objects.filter(id=solicitud_id, activo=True)
