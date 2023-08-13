@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Index Page</title>
-    <link rel="stylesheet" type="text/css" href="styles.css">
+    <title>Solicitudes de Gobierno</title>
+    <!-- <link rel="stylesheet" type="text/css" href="styles.css"> -->
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -75,23 +75,31 @@
             background-color: #fff;
             color: #333;
         }
+
+        a {
+            text-decoration: none;
+            color: #000000;
+        }
     </style>
 </head>
 
 <body>
     <header>
-        <h1>Government</h1>
+        <h1>Gobierno de Mexico</h1>
         <div class="buttons">
             <button class="styled-button">Log In</button>
-            <a href="{% url 'redirect_view' %}" class="redirect-button" name="log-in">Click to Redirect</a>
             <button class="styled-button">Register</button>
         </div>
     </header>
 
     <div class="box-container">
-        <!-- <div class="box">Mis solicitudes</div> -->
-        <div class="box">Solicitudes recientes en [tu ciudad]</div>
-        <div class="box">Crear solicitudes</div>
+        <div class="box" name="mis-solicitudes">
+            <a href="{% url 'solicitudes:ver-solicitudes' %}">
+                Mis solicitudes
+            </a>
+        </div>
+        <div class="box" name="solicitudes-recientes">Solicitudes recientes en [tu ciudad]</div>
+        <div class="box" name="crear-solicitudes">Crear solicitudes</div>
     </div>
 
     <footer>
