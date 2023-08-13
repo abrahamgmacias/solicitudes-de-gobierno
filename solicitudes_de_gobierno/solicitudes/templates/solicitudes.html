@@ -117,16 +117,10 @@
         <h2>Mis solicitudes</h2>
         <p>{{ res }}</p>
         <ul>
-            {% for item in solicitudes_list %}
+            {% for item in solicitudes_titulos %}
             <div class="list-container">
                 <li>
-                    <ul>
-                        {% for key, value in item.items %}
-                        <li>
-                            <strong>{{ key }}:</strong> {{ value }}
-                        </li>
-                        {% endfor %}
-                    </ul>
+                    {{ item }}
                 </li>
             </div>
             {% endfor %}
