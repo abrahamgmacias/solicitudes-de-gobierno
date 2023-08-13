@@ -27,9 +27,15 @@
             margin: 0;
         }
 
-        .white-section {
-            height: 300px;
-            background-color: white;
+        h2 {
+            font-size: 35px;
+            margin: 0;
+        }
+
+        .mis-solicitudes {
+            text-align: left;
+            padding: 50px;
+            max-width: 800px;
         }
 
         .buttons {
@@ -85,6 +91,16 @@
             text-decoration: none;
             color: #000000;
         }
+
+        .list-container {
+            margin-bottom: 20px;
+            /* Add space below the list container */
+        }
+
+        ul {
+            list-style-type: none;
+            /* Remove default list bullets */
+        }
     </style>
 </head>
 
@@ -97,7 +113,25 @@
         </div>
     </header>
 
-    <div class="white-section"></div>
+    <div class="mis-solicitudes">
+        <h2>Mis solicitudes</h2>
+        <p>{{ res }}</p>
+        <ul>
+            {% for item in solicitudes_list %}
+            <div class="list-container">
+                <li>
+                    <ul>
+                        {% for key, value in item.items %}
+                        <li>
+                            <strong>{{ key }}:</strong> {{ value }}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </li>
+            </div>
+            {% endfor %}
+        </ul>
+    </div>
 
     <footer>
         <p>Website licenses and contact info</p>
