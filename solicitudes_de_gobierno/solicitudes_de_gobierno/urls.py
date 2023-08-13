@@ -19,7 +19,7 @@ from django.contrib import admin
 from . import views
 
 urlpatterns = [
-    path("", views.Index, name="landing-page"),
+    path("", views.index, name="landing-page"),
     path("usuarios/", include("usuarios.urls")),
     path("solicitudes/", include("solicitudes.urls")),
     path("admin/", admin.site.urls),
