@@ -23,11 +23,11 @@
     <h2>Mis solicitudes</h2>
     <p>{{ res }}</p>
     <ul>
-        {% for item in solicitudes_titulos %}
+        {% for solicitud in solicitudes %}
         <div class="list-container">
             <li>
-                <a href="{% url 'solicitudes:ver-solicitudes' %}">
-                    {{ item }}
+                <a href="{% url 'solicitudes:solicitud-id' solicitud.id  %}">
+                    {{ solicitud.titulo }}
                 </a>
             </li>
         </div>
