@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% load bootstrap5 %}
+
+{% block title %}Opciones{% endblock %}
+
+{% block content %}
+<style>
+    .grid-container {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-gap: 20px;
+        margin-left: 80px;
+        margin-top: 10px;
+        margin-bottom: 30px;
+        margin-right: 20px;
+    }
+
+    .rectangular-section {
+        background-color: lightblue;
+        padding: 1px;
+        border-radius: 10px;
+        text-align: center;
+        height: 80px;
+    }
+
+    .key {
+        font-weight: bold;
+    }
+
+    .new-h1 {
+        margin-left: 25px;
+        margin-top: 20px;
+        font-size: 30px;
+    }
+</style>
+
+
+<div class="container">
+    <h1 class="new-h1">Solicitud #{{solicitud_data.id}}</h1>
+    <div class="grid-container">
+        {% for key, value in solicitud_data.items %}
+        {% if key != 'id' %}
+        <div class="rectangular-section">
+            <p class="key">{{ key }}</p>
+            <p>{{ value }}</p>
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}
