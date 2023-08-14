@@ -13,19 +13,19 @@ def misSolicitudesView(request):
     # Display none if none, display JSON if some, for now
     solicitudes = getSolicitudesDeUsuario(sample_user_id)
 
-    solicitudes_titulos = []
     for solicitud in solicitudes['data']:
-        solicitudes_titulos += [formatTituloSolicitud(solicitud)]
+        solicitud['titulo'] = formatTituloSolicitud(solicitud)
+    
+    return render(request, 'solicitudes.html', {'res': solicitudes['res'], 'solicitudes': solicitudes['data']})
 
-    return render(request, 'solicitudes.html', {'solicitudes_titulos': solicitudes_titulos, 'res': solicitudes['res']})
 
+def solicitudView(request, solicitud_id):
+    solicitud = getDataSolicitud(solicitud_id)
+    solicitud_historial = getHistorialDeSolicitud(solicitud_id)
 
-def solicitudView(request):
-    sample_user_id = 1
-    solicitud_data = getDataSolicitud(sample_user_id)
-    solicitud_historial = getHistorialDeSolicitud(sample_user_id)
+    # print(solicitud_data)
 
-    return render(request, 'solicitudes.html')
+    return render(request, 'solicitud-individual.html', {'solicitud_data': solicitud['data'], 'solicitud_historial': solicitud_historial})
 
 
 def manageSolicitudes(request, solicitud_id):
@@ -150,19 +150,18 @@ def registrarSolicitud(data):
     return JsonResponse(status=200, data={"res": "Se registró la solicitud correctamente."})
 
 
-def getHistorialDeSolicitud(request, solicitud_id):
-    if request.method == "GET":
-        historial_de_solicitudes = HistorialDeSolicitud.objects.select_related('estatus').filter(solicitud_id=solicitud_id, activo=True)
-        historial_data = list(
-            historial_de_solicitudes.values(
-                "id", "solicitud_id", "estatus", "activo", "fecha_de_creacion"
+def getHistorialDeSolicitud(solicitud_id):
+    historial_de_solicitudes = HistorialDeSolicitud.objects.select_related('estatus').filter(solicitud_id=solicitud_id, activo=True)
+    historial_data = list(
+        historial_de_solicitudes.values(
+            "id", "solicitud_id", "estatus", "activo", "fecha_de_creacion"
             )
-        )
+    )
 
-        for hist, hist_data in zip(historial_de_solicitudes, historial_data):
-            hist_data["estatus"] = hist.estatus.nombre
+    for hist, hist_data in zip(historial_de_solicitudes, historial_data):
+        hist_data["estatus"] = hist.estatus.nombre
 
-        return JsonResponse(status=200, data={"historial": historial_data})
+    return JsonResponse(status=200, data={"historial": historial_data})
 
 
 def getDataSolicitud(solicitud_id):
@@ -178,10 +177,10 @@ def getDataSolicitud(solicitud_id):
         solicitud_data["espacio"] = solicitud_instance[0].espacio.nombre
         solicitud_data["prioridad"] = solicitud_instance[0].prioridad.nombre
 
-        return JsonResponse(status=200, data=solicitud_data, safe=False)
+        return {'data': solicitud_data, 'res': 'Se obtuvó la información de manera exitosa.'}
 
     else:
-        return JsonResponse(status=404, data={"res": solicitud["res"]})
+        return {'data': None, 'res': 'No se encontró una solicitud con esa ID.'}
 
 
 def eliminarSolicitud(solicitud_id):
