@@ -23,9 +23,27 @@ def solicitudView(request, solicitud_id):
     solicitud = getDataSolicitud(solicitud_id)
     solicitud_historial = getHistorialDeSolicitud(solicitud_id)
 
-    # print(solicitud_data)
+    package_steps = [
+        "Preparation",
+        "Quality Check",
+        "Shipment",
+        "In Transit",
+        "Out for Delivery",
+        "Delivered",
+    ]
 
-    return render(request, 'solicitud-individual.html', {'solicitud_data': solicitud['data'], 'solicitud_historial': solicitud_historial})
+    current_step = "In Transit"
+    current_step_index = package_steps.index(current_step)
+    previous_steps = package_steps[:current_step_index]
+
+    return render(request, 'solicitud-individual.html', {
+        'solicitud_data': solicitud['data'], 
+        'solicitud_historial': solicitud_historial,
+        'package_steps': package_steps,
+        'current_step': current_step,
+        'previous_steps': previous_steps
+        }
+    )
 
 
 def manageSolicitudes(request, solicitud_id):
