@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}Opciones{% endblock %}
+
+{% block content %}
+<style>
+    .mis-solicitudes {
+        text-align: left;
+        padding: 50px;
+        max-width: 800px;
+    }
+
+    li:hover {
+        font-weight: bold;
+    }
+
+    li {
+        padding: 8px;
+    }
+</style>
+
+<div class="mis-solicitudes">
+    <h2>Uh oh....</h2>
+    <p>No encontramos una solicitud con esa identificación. Puede que haya sido eliminada.</p>
+</div>
+{% endblock %}
