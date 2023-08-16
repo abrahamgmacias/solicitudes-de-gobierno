@@ -20,36 +20,58 @@ def misSolicitudesView(request):
 
 
 def solicitudView(request, solicitud_id):
-    solicitud = getDataSolicitud(solicitud_id)
-    solicitud_historial = getHistorialDeSolicitud(solicitud_id)
-    comentarios = getComentarios(solicitud_id)
+    if request.method == 'GET':
+        solicitud = getDataSolicitud(solicitud_id)
 
-    print(comentarios)
+        if solicitud['data'] != None:
+            solicitud_historial = getHistorialDeSolicitud(solicitud_id)
+            comentarios = getComentarios(solicitud_id)
 
-    package_steps = [
-        "Registro",
-        "Revisión",
-        "Retroalimentación",
-        "Completado",
-    ]
+            package_steps = [
+                "Registro",
+                "Revisión",
+                "Retroalimentación",
+                "Completado",
+            ]
 
-    current_step = "Revisión"
-    current_step_index = package_steps.index(current_step)
-    previous_steps = package_steps[:current_step_index]
+            current_step = "Revisión"
+            current_step_index = package_steps.index(current_step)
+            previous_steps = package_steps[:current_step_index]
 
-    return render(request, 'solicitud-individual.html', {
-        'solicitud_data': solicitud['data'], 
-        'solicitud_historial': solicitud_historial['data'],
-        'package_steps': package_steps,
-        'current_step': current_step,
-        'previous_steps': previous_steps,
-        'comentarios': comentarios
-        }
-    )
+            return render(request, 'solicitud-individual.html', {
+                'solicitud_data': solicitud['data'], 
+                'solicitud_historial': solicitud_historial['data'],
+                'package_steps': package_steps,
+                'current_step': current_step,
+                'previous_steps': previous_steps,
+                'comentarios': comentarios
+                }
+            )
+        
+        else: 
+            return render(request, 'missing-solicitud-individual.html',)
 
 
 def editarSolicitudView(request, solicitud_id):
     return render(request, 'base/index.html')
+
+
+def eliminarSolicitudView(request, solicitud_id):
+    if request.method == 'DELETE':  
+        solicitud = validarExistenciaSolicitud(solicitud_id)
+
+        print(solicitud_id)
+
+        if solicitud['exists']:
+            solicitud_instance = solicitud['solicitud'].first()
+            solicitud_instance.activo = False
+            solicitud_instance.save()
+
+            return JsonResponse(status=200, data={"res": "Se eliminó la solicitud correctamente."})
+                
+        else: 
+            return JsonResponse(status=404, data={"res": solicitud['data']})
+
 
 def manageSolicitudes(request, solicitud_id):
     try:
@@ -205,20 +227,6 @@ def getDataSolicitud(solicitud_id):
 
     else:
         return {'data': None, 'res': 'No se encontró una solicitud con esa ID.'}
-
-
-def eliminarSolicitud(solicitud_id):
-    solicitud = validarExistenciaSolicitud(solicitud_id)
-
-    if solicitud['exists']:
-        solicitud_instance = solicitud['solicitud'].first()
-        solicitud_instance.activo = False
-        solicitud_instance.save()
-
-        return JsonResponse(status=200, data={"res": "Se eliminó la solicitud correctamente."})
-            
-    else: 
-        return JsonResponse(status=404, data={"res": "No se encontró un usuario con ese correo."})
 
 
 
