@@ -22,29 +22,34 @@ def misSolicitudesView(request):
 def solicitudView(request, solicitud_id):
     solicitud = getDataSolicitud(solicitud_id)
     solicitud_historial = getHistorialDeSolicitud(solicitud_id)
+    comentarios = getComentarios(solicitud_id)
+
+    print(comentarios)
 
     package_steps = [
-        "Preparation",
-        "Quality Check",
-        "Shipment",
-        "In Transit",
-        "Out for Delivery",
-        "Delivered",
+        "Registro",
+        "Revisión",
+        "Retroalimentación",
+        "Completado",
     ]
 
-    current_step = "In Transit"
+    current_step = "Revisión"
     current_step_index = package_steps.index(current_step)
     previous_steps = package_steps[:current_step_index]
 
     return render(request, 'solicitud-individual.html', {
         'solicitud_data': solicitud['data'], 
-        'solicitud_historial': solicitud_historial,
+        'solicitud_historial': solicitud_historial['data'],
         'package_steps': package_steps,
         'current_step': current_step,
-        'previous_steps': previous_steps
+        'previous_steps': previous_steps,
+        'comentarios': comentarios
         }
     )
 
+
+def editarSolicitudView(request, solicitud_id):
+    return render(request, 'base/index.html')
 
 def manageSolicitudes(request, solicitud_id):
     try:
@@ -95,6 +100,7 @@ def getSolicitudesDeUsuario(usuario_id):
 
 def formatTituloSolicitud(solicitud_data):
     return f"ID: {solicitud_data['id']} - {solicitud_data['accion']} {solicitud_data['espacio']} - {solicitud_data['municipio_ciudad']}, {solicitud_data['estado']} - {solicitud_data['fecha_de_creacion']}"
+
 
 def createNombreTicket(solicitud_data):
     pass
@@ -179,7 +185,7 @@ def getHistorialDeSolicitud(solicitud_id):
     for hist, hist_data in zip(historial_de_solicitudes, historial_data):
         hist_data["estatus"] = hist.estatus.nombre
 
-    return JsonResponse(status=200, data={"historial": historial_data})
+    return {"data": historial_data, 'res': 'Se obtuvo el historial con éxito.'}
 
 
 def getDataSolicitud(solicitud_id):
@@ -218,7 +224,15 @@ def eliminarSolicitud(solicitud_id):
 
 
 
+def getComentarios(solicitud_id):
+    comentarios_instance = Comentario.objects.filter(activo=True, solicitud_id=solicitud_id)
 
+    if comentarios_instance.exists():
+        comentarios = list(comentarios_instance.values())
+        return {'data': comentarios, 'res': 'Se obtuvó la información de manera exitosa.'}
+
+    else:
+        return {'data': None, 'res': 'Actualmente no hay comentarios.'}
 
 
 def agregarComentario(data, solicitud_id):
