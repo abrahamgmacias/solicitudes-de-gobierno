@@ -12,7 +12,7 @@
         margin-left: 80px;
         margin-top: 10px;
         margin-bottom: 30px;
-        margin-right: 20px;
+        margin-right: 70px;
     }
 
     .rectangular-section {
@@ -30,7 +30,9 @@
     .new-h1 {
         margin-left: 25px;
         margin-top: 20px;
+        margin-bottom: 20px;
         font-size: 30px;
+        color: black;
     }
 
     .timeline-point {
@@ -44,41 +46,73 @@
         cursor: pointer;
     }
 
-    /* Style the timeline line */
     .timeline-line {
-        width: 100%;
+        width: 97%;
         height: 2px;
         position: absolute;
         top: 50%;
         transform: translateY(-50%);
         z-index: -1;
         border-top: 2px dotted gray;
-        /* Use dotted border instead of background color */
         border-radius: 2px;
-        /* Add some rounded corners */
     }
 
-    /* Style the active point */
     .timeline-point.active {
         background-color: green;
         border-color: black;
-        /* Keep the black border for the active point */
     }
 
-    /* Style the completed points */
     .timeline-point.completed {
         background-color: yellow;
         border-color: black;
-        /* Add a black border for completed points */
     }
 
-    /* Additional styling for the timeline */
     .timeline {
         display: flex;
         justify-content: space-between;
         align-items: center;
         padding: 20px;
         position: relative;
+        margin-bottom: 100px;
+        margin-right: 70px;
+        margin-left: 80px;
+    }
+
+    .btn-primary.rounded-pill {
+        background-color: #007bff;
+        border-color: #007bff;
+        border-radius: 50px;
+        padding: 10px 20px;
+        color: white;
+        font-weight: bold;
+        margin-left: 1270px;
+    }
+
+    .btn-danger.custom-delete {
+        background-color: #ff0000;
+        border-color: #ff0000;
+        border-radius: 50px;
+        padding: 10px 20px;
+        color: white;
+        font-weight: bold;
+        margin-left: 1160px;
+        margin-bottom: 200;
+    }
+
+    .btn-danger.custom-delete:hover {
+        background-color: #ac0000;
+    }
+
+    .btn-primary.rounded-pill:hover {
+        background-color: #0061c9;
+    }
+
+    .custom-container {
+        margin-top: 50px;
+    }
+
+    .list-group-item {
+        margin-left: 60px;
     }
 </style>
 
@@ -113,9 +147,19 @@
     </div>
 </div>
 
-<!-- Historial -->
-<h1 class="new-h1">Historial</h1>
 <div class="container mt-5">
+    <div class="d-flex justify-content-end">
+        <a href="{% url 'landing-page' %}" class="btn btn-danger custom-delete me-2">Eliminar</a>
+    </div>
+
+    <div class="d-flex justify-content-end">
+        <a href="{% url 'landing-page' %}" class="btn btn-primary rounded-pill">Editar</a>
+    </div>
+</div>
+
+<!-- Historial -->
+<div class="custom-container">
+    <h1 class="new-h1">Historial</h1>
     <div class="timeline">
         <div class="timeline-line"></div>
         {% for step in package_steps %}
@@ -128,9 +172,24 @@
     </div>
 
     <ul class="list-group">
-        {% for step in package_steps %}
-        <li class="list-group-item">{{ step }}</li>
+        {% for step in solicitud_historial %}
+        <li class="list-group-item">{{ step.estatus }}</li>
         {% endfor %}
+    </ul>
+</div>
+
+<!-- Sección de comentarios -->
+<div class="custom-container">
+    <h1 class="new-h1">Comentarios</h1>
+    <ul class="list-group">
+        {% if comentarios.data is null %}
+        <p>{{comentarios.res}}</p>
+
+        {% else %}
+        {% for comentario in comentarios.data %}
+        <li class="list-group-item">{{ comentario.texto }}</li>
+        {% endfor %}
+        {% endif %}
     </ul>
 </div>
 
