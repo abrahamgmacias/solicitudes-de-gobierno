@@ -24,22 +24,13 @@
         margin-bottom: 5px;
     }
 
-    .new-h1 {
+    .h2 {
         color: black;
-        margin-left: 20px;
-        margin-top: 20px;
-        margin-bottom: 10px;
-        font-size: 30px;
-    }
-
-    i {
-        margin-left: 20px;
-        margin-bottom: 10px;
+        margin-bottom: 5px;
     }
 
     .new-container {
         margin-bottom: 20px;
-        margin-left: 50px;
     }
 
     .btn-danger.custom-delete {
@@ -96,27 +87,25 @@
 </script>
 
 
-<div class="new-container mt-5">
-    <h1 class="new-h1">Registro de solicitud</h1>
-    <i class="new-p">Llene todas y cada una de las casillas con la información requerida.</i>
-</div>
 
-<div class="new-container mt-5">
-    <form method="post" class="custom-form" id="registrarForm">
-        {% csrf_token %}
+<h2>Registro de solicitud</h2>
+<i>Llene todas y cada una de las casillas con la información requerida.</i>
 
-        {% for field in form %}
-        {% if field.name != 'usuario' %}
-        <div class="mb-3">
-            <label class="form-label-bold">{{ field.label_tag }}</label>
-            {{ field }}
-        </div>
-        {% endif %}
-        {% endfor %}
 
-        <div class="d-flex justify-content-end">
-            <button type="submit" class="btn btn-primary rounded-pill" id="registrarButton">Registrar</button>
-        </div>
-    </form>
-</div>
+<form method="post" class="custom-form" id="registrarForm">
+    {% csrf_token %}
+
+    {% for field in form %}
+    {% if field.name != 'usuario' %}
+    <div class="mb-3">
+        <label class="form-label-bold">{{ field.label_tag }}</label>
+        {{ field }}
+    </div>
+    {% endif %}
+    {% endfor %}
+
+    <div class="d-flex justify-content-end">
+        <button type="submit" class="btn btn-primary rounded-pill" id="registrarButton">Registrar</button>
+    </div>
+</form>
 {% endblock %}
