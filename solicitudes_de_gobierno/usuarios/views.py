@@ -66,18 +66,13 @@ def actualizarUsuario(request):
         })
 
 
-@csrf_exempt
-def getDataUsuario(request):
-    if request.method == "GET":
-        data = json.loads(request.body.decode())
+def getDataUsuario(usuario_id):
+    user_instance = Usuario.objects.filter(id=usuario_id, activo=True)
 
-        user_instance = Usuario.objects.filter(correo_electronico=data['correo_electronico'], activo=True)
-        if user_instance.exists():
-            return JsonResponse(status=200, data=list(user_instance.values())[0], safe=False)
-        else: 
-            return JsonResponse(status=404, data={
-                "res": "No se encontró un usuario con ese correo."
-            })
+    if user_instance.exists():
+        return {'data': list(user_instance.values())[0], 'res': 'Se encontró la data del usuario exitosamente.'}
+    else: 
+        return {'data': None, 'res': 'No se encontró usuario activo con esa ID.'}
 
 
 @csrf_exempt
