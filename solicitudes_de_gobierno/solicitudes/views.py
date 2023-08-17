@@ -1,21 +1,20 @@
 import json
-from usuarios.models import Usuario
-from usuarios.views import validarExistenciaUsuario
 from .forms import SolicitudForm
+from usuarios.models import Usuario
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
+from usuarios.views import validarExistenciaUsuario
 from django.views.decorators.csrf import csrf_exempt
 from .models import Solicitud, HistorialDeSolicitud, Comentario
 
 def misSolicitudesView(request):
     # Query user solicitudes
     sample_user_id = 1
-
-    # Display none if none, display JSON if some, for now
     solicitudes = getSolicitudesDeUsuario(sample_user_id)
 
-    for solicitud in solicitudes['data']:
-        solicitud['titulo'] = formatTituloSolicitud(solicitud)
+    if solicitudes['data'] != None:
+        for solicitud in solicitudes['data']:
+            solicitud['titulo'] = formatTituloSolicitud(solicitud)
     
     return render(request, 'solicitudes.html', {'res': solicitudes['res'], 'solicitudes': solicitudes['data']})
 
