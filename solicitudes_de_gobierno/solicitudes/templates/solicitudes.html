@@ -26,24 +26,22 @@
     }
 </style>
 
-<div class="mis-solicitudes">
-    <h2>Mis solicitudes</h2>
-    <p>{{ res }}</p>
+<h2>Mis solicitudes</h2>
+<p>{{ res }}</p>
 
-    {% if solicitudes is not None %}
-    <ul>
-        {% for solicitud in solicitudes %}
-        <div class="list-container">
-            <li>
-                <a href="{% url 'solicitudes:solicitud-id' solicitud.id  %}">
-                    {{ solicitud.titulo }}
-                </a>
-            </li>
-        </div>
-        {% endfor %}
-    </ul>
-    {% endif %}
-</div>
+{% if solicitudes is not None %}
+<ul>
+    {% for solicitud in solicitudes %}
+    <div class="list-container">
+        <li>
+            <a href="{% url 'solicitudes:solicitud-id' solicitud.id  %}">
+                {{ solicitud.titulo }}
+            </a>
+        </li>
+    </div>
+    {% endfor %}
+</ul>
+{% endif %}
 
 <div class="d-flex justify-content-end">
     <button type="submit" class="btn btn-primary rounded-pill" id="registrarButton">Registrar</button>
