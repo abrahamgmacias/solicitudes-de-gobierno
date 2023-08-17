@@ -24,7 +24,9 @@
             "fecha_de_nacimiento": "1999-08-11",
             "tipo_de_usuario": 1,
             "correo_electronico": "abrahamg@hotmail.com",
-            "contrasena": "something"
+            "contrasena": "something",
+            "municipio_ciudad": "Hermosillo",
+            "estado": "Sonora"
         }
     },
     {
@@ -36,7 +38,9 @@
             "fecha_de_nacimiento": "1991-02-10",
             "tipo_de_usuario": 1,
             "correo_electronico": "dchoe@outlook.com",
-            "contrasena": "basquiat"
+            "contrasena": "basquiat",
+            "municipio_ciudad": "Hermosillo",
+            "estado": "Sonora"
         }
     },
     {
