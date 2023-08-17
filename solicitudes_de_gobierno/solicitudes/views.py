@@ -1,7 +1,8 @@
 import json
 from usuarios.models import Usuario
 from usuarios.views import validarExistenciaUsuario
-from django.shortcuts import render
+from .forms import SolicitudForm
+from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from .models import Solicitud, HistorialDeSolicitud, Comentario
@@ -60,8 +61,6 @@ def eliminarSolicitudView(request, solicitud_id):
     if request.method == 'DELETE':  
         solicitud = validarExistenciaSolicitud(solicitud_id)
 
-        print(solicitud_id)
-
         if solicitud['exists']:
             solicitud_instance = solicitud['solicitud'].first()
             solicitud_instance.activo = False
@@ -71,6 +70,22 @@ def eliminarSolicitudView(request, solicitud_id):
                 
         else: 
             return JsonResponse(status=404, data={"res": solicitud['data']})
+
+
+def crearSolicitudView(request):
+    if request.method == 'POST':
+        form = SolicitudForm(request.POST)
+        form.usuario = 1
+
+        if form.is_valid():
+            form.save() 
+
+        return JsonResponse(status=200, data={'res': 'Se registró exitosamente la solicitud.'})
+
+    if request.method == 'GET':
+        form = SolicitudForm()
+
+    return render(request, 'crear-solicitud.html', {'form': form})
 
 
 def manageSolicitudes(request, solicitud_id):
@@ -111,7 +126,7 @@ def getSolicitudesDeUsuario(usuario_id):
                 solicitud_data["espacio"] = solicitud_instance.espacio.nombre
                 solicitud_data["prioridad"] = solicitud_instance.prioridad.nombre
 
-            return {'res': f'Tienes {len(solicitud_data)} solicitudes activas.', 'data': solicitudes_data}
+            return {'res': f'Tienes {len(solicitudes_data)} solicitudes activas.', 'data': solicitudes_data}
 
         else:
             return {'res': 'No tienes solicitudes activas', 'data': None}
@@ -175,15 +190,15 @@ def actualizarSolicitud(data, solicitud_id):
 def registrarSolicitud(data):
     try:
         solicitud = Solicitud.objects.create(
-            accion_id=data['accion_id'],
-            espacio_id=data['espacio_id'],
-            usuario_id=data['usuario_id'],
+            accion=data['accion'],
+            espacio=data['espacio'],
+            usuario=data['usuario'],
             informacion_adicional=data['informacion_adicional'],
             direccion=data['direccion'],
             estado=data['estado'],
             municipio_ciudad=data['municipio_ciudad'],
             codigo_postal=data['codigo_postal'],
-            prioridad_id=data['prioridad_id'],
+            prioridad=data['prioridad'],
         )
         solicitud.save()
 
