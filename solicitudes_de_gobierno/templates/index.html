@@ -17,10 +17,12 @@
         background-color: #f5f5f5;
         border: 1px solid #ccc;
         padding: 20px;
+        align-items: center;
+        height: 100vh;
         width: calc(25% - 20px);
         box-sizing: border-box;
         text-align: center;
-        border-radius: 5px;
+        border-radius: 10px;
         height: 200px;
         width: 150px;
     }
@@ -32,16 +34,20 @@
 </style>
 
 <div class="box-container">
-    <div class="box-opciones" name="mis-solicitudes">
-        <a href="{% url 'solicitudes:ver-solicitudes' %}">
+    <a href="{% url 'solicitudes:ver-solicitudes' %}">
+        <div class="box-opciones" name="mis-solicitudes">
             Mis solicitudes
-        </a>
-    </div>
-    <div class="box-opciones" name="solicitudes-recientes">Solicitudes recientes en [tu ciudad]</div>
-    <div class="box-opciones" name="crear-solicitudes">
-        <a href="{% url 'solicitudes:registrar-solicitudes' %}">
+        </div>
+    </a>
+    <a>
+        <div class="box-opciones" name="solicitudes-recientes">
+            Solicitudes recientes en {{ mi_ciudad }}
+        </div>
+    </a>
+    <a href="{% url 'solicitudes:registrar-solicitudes' %}">
+        <div class="box-opciones" name="crear-solicitudes">
             Registrar solicitud
-        </a>
-    </div>
+        </div>
+    </a>
 </div>
 {% endblock %}
