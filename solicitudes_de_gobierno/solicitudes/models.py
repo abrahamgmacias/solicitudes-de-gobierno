@@ -10,10 +10,16 @@ class Accion(models.Model):
     class Meta:
         verbose_name_plural = "acciones"
 
+    def __str__(self):
+        return self.nombre
+
 class Espacio(models.Model):
     nombre = models.CharField(max_length=100, null=False, unique=True)
     activo = models.BooleanField(null=False, default=True)
     fecha_de_creacion = models.DateField(null=False, default=datetime.date.today())
+
+    def __str__(self):
+        return self.nombre
 
 class Prioridad(models.Model):
     nombre = models.CharField(max_length=100, null=False, unique=True)
@@ -22,6 +28,9 @@ class Prioridad(models.Model):
 
     class Meta:
         verbose_name_plural = "prioridades"
+
+    def __str__(self):
+        return self.nombre
 
 class Solicitud(models.Model):
     accion = models.ForeignKey(
@@ -51,9 +60,6 @@ class Solicitud(models.Model):
     )
     activo = models.BooleanField(null=False, default=True)
     fecha_de_creacion = models.DateField(null=False, default=datetime.date.today())
-
-    class Meta:
-        verbose_name_plural = "solicitudes"
 
     class Meta:
         verbose_name = "solicitud"
