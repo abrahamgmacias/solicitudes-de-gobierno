@@ -18,20 +18,32 @@
         border: 1px solid #ccc;
         padding: 20px;
         align-items: center;
-        height: 100vh;
-        width: calc(25% - 20px);
         box-sizing: border-box;
         text-align: center;
         border-radius: 10px;
-        height: 200px;
+        height: 100px;
         width: 150px;
     }
 
     .box-opciones:hover {
-        height: 190px;
+        height: 95px;
         width: 140px;
     }
+
+    .line {
+        position: absolute;
+        background-color: #b38e5d;
+        width: 35px;
+        height: 5px;
+    }
+
+    h2 {
+        margin-bottom: 5px;
+    }
 </style>
+
+<h2>Bienvenido, {{ usuario.nombre }} {{ usuario.apellido }}... </h2>
+<div class="line"></div>
 
 <div class="box-container">
     <a href="{% url 'solicitudes:ver-solicitudes' %}">
@@ -41,7 +53,7 @@
     </a>
     <a href="{% url 'solicitudes:solicitudes-locales' %}">
         <div class="box-opciones" name="solicitudes-recientes">
-            Solicitudes recientes en {{ mi_ciudad }}
+            Solicitudes recientes en {{ usuario.municipio_ciudad }}
         </div>
     </a>
     <a href="{% url 'solicitudes:registrar-solicitudes' %}">
@@ -50,4 +62,5 @@
         </div>
     </a>
 </div>
+
 {% endblock %}
