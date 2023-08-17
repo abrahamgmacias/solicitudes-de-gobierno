@@ -72,7 +72,7 @@ def eliminarSolicitudView(request, solicitud_id):
             return JsonResponse(status=404, data={"res": solicitud['data']})
 
 
-def crearSolicitudView(request):
+def registrarSolicitudView(request):
     if request.method == 'POST':
         form = SolicitudForm(request.POST)
         form.usuario = 1
@@ -85,7 +85,7 @@ def crearSolicitudView(request):
     if request.method == 'GET':
         form = SolicitudForm()
 
-    return render(request, 'crear-solicitud.html', {'form': form})
+    return render(request, 'registrar-solicitud.html', {'form': form})
 
 
 def manageSolicitudes(request, solicitud_id):

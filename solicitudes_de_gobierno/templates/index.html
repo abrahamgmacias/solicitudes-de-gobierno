@@ -38,6 +38,10 @@
         </a>
     </div>
     <div class="box-opciones" name="solicitudes-recientes">Solicitudes recientes en [tu ciudad]</div>
-    <div class="box-opciones" name="crear-solicitudes">Crear solicitudes</div>
+    <div class="box-opciones" name="crear-solicitudes">
+        <a href="{% url 'solicitudes:registrar-solicitudes' %}">
+            Registrar solicitud
+        </a>
+    </div>
 </div>
 {% endblock %}
