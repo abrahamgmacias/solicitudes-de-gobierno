@@ -3,8 +3,8 @@ from .forms import SolicitudForm
 from usuarios.models import Usuario
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
-from usuarios.views import validarExistenciaUsuario
 from django.views.decorators.csrf import csrf_exempt
+from usuarios.views import validarExistenciaUsuario, getDataUsuario
 from .models import Solicitud, HistorialDeSolicitud, Comentario
 
 def misSolicitudesView(request):
@@ -87,7 +87,19 @@ def registrarSolicitudView(request):
     return render(request, 'registrar-solicitud.html', {'form': form})
 
 
-def manageSolicitudes(request, solicitud_id):
+def recientesSolicitudesLocalesView(request):
+    sample_user_id = 1
+    usuario = getDataUsuario(usuario_id=sample_user_id)
+
+    solicitudes = getSolicitudesPorParametros({
+        'municipio_ciudad': usuario['data']['municipio_ciudad'],
+        'activo': True
+    })
+
+    return render(request, 'solicitudes-recientes.html', { 'solicitudes': solicitudes['data'], 'res': solicitudes['res']})
+
+
+def manageSolicitudes(request, solicitud_id): 
     try:
         data = json.loads(request.body.decode())
     except:
@@ -132,6 +144,16 @@ def getSolicitudesDeUsuario(usuario_id):
 
     else:
        return {'res': usuario['res']}
+
+
+def getSolicitudesPorParametros(condiciones_de_filtro):
+    solicitudes = Solicitud.objects.filter(**condiciones_de_filtro)
+
+    if solicitudes.exists():
+        return { 'res': f'Existen {len(solicitudes)} solicitudes activas cerca de ti.', 'data': list(solicitudes.values())}
+    
+    else: 
+        return { 'res': 'Actualmente no hay solicitudes activas cerca de ti.', 'data': None}
 
 
 def formatTituloSolicitud(solicitud_data):
