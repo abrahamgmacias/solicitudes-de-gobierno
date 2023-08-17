@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+{% load bootstrap5 %}
+
+{% block title %}Opciones{% endblock %}
+
+{% block content %}
+<style>
+    .custom-form {
+        margin-left: 70px;
+    }
+
+    .form-label-bold {
+        font-weight: bold;
+    }
+
+    .custom-input {
+        border: 1px solid black;
+        width: 300px;
+        height: 50px;
+    }
+
+    .mb-3 {
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
+
+    .new-h1 {
+        color: black;
+        margin-left: 20px;
+        margin-top: 20px;
+        margin-bottom: 10px;
+        font-size: 30px;
+    }
+
+    i {
+        margin-left: 20px;
+        margin-bottom: 10px;
+    }
+
+    .new-container {
+        margin-bottom: 20px;
+        margin-left: 50px;
+    }
+
+    .btn-primary.rounded-pill {
+        background-color: #007bff;
+        border-color: #007bff;
+        border-radius: 50px;
+        padding: 10px 20px;
+        color: white;
+        font-weight: bold;
+        margin-left: 400px;
+    }
+
+    .btn-primary.rounded-pill:hover {
+        background-color: #0061c9;
+    }
+
+    .btn-danger.custom-delete {
+        background-color: #ff0000;
+        border-color: #ff0000;
+        border-radius: 50px;
+        padding: 10px 20px;
+        color: white;
+        font-weight: bold;
+        margin-left: 1160px;
+        margin-bottom: 200;
+    }
+
+    .btn-danger.custom-delete:hover {
+        background-color: #ac0000;
+    }
+
+    .d-flex {
+        margin-top: 20px;
+    }
+</style>
+
+{% bootstrap_javascript %}
+{% csrf_token %}
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.getElementById('registrarButton').addEventListener('click', function () {
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+            event.preventDefault();
+            var form = document.getElementById("registrarForm");
+            var formData = new FormData(form);
+            formData.append("usuario", 1);
+
+            fetch(`registrar`, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': csrfToken,
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    alert("La solicitud fue registrada exitosamente.");
+                    window.location.href = '/solicitudes/mis-solicitudes';
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Ocurrió un error intentando registrar la solicitud. Intente más tarde.');
+                });
+        });
+    });
+</script>
+
+
+<div class="new-container mt-5">
+    <h1 class="new-h1">Registro de solicitud</h1>
+    <i class="new-p">Llene todas y cada una de las casillas con la información requerida.</i>
+</div>
+
+<div class="new-container mt-5">
+    <form method="post" class="custom-form" id="registrarForm">
+        {% csrf_token %}
+
+        {% for field in form %}
+        {% if field.name != 'usuario' %}
+        <div class="mb-3">
+            <label class="form-label-bold">{{ field.label_tag }}</label>
+            {{ field }}
+        </div>
+        {% endif %}
+        {% endfor %}
+
+        <div class="d-flex justify-content-end">
+            <button type="submit" class="btn btn-primary rounded-pill" id="registrarButton">Registrar</button>
+        </div>
+    </form>
+</div>
+{% endblock %}
