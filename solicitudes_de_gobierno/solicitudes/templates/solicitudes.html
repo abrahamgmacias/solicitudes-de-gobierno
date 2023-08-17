@@ -6,7 +6,9 @@
 <style>
     .mis-solicitudes {
         text-align: left;
-        padding: 50px;
+        padding: 10px;
+        margin-top: 30px;
+        margin-left: 50px;
         max-width: 800px;
     }
 
@@ -16,6 +18,11 @@
 
     li {
         padding: 8px;
+    }
+
+    .d-flex {
+        margin-bottom: 30px;
+        margin-left: 600px;
     }
 </style>
 
@@ -33,5 +40,9 @@
         </div>
         {% endfor %}
     </ul>
+</div>
+
+<div class="d-flex justify-content-end">
+    <button type="submit" class="btn btn-primary rounded-pill" id="registrarButton">Registrar</button>
 </div>
 {% endblock %}
