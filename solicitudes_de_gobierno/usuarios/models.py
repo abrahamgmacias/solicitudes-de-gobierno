@@ -26,6 +26,8 @@ class Usuario(models.Model):
     )
     # login_key = models.CharField()
     correo_electronico = models.CharField(max_length=100, null=False, default="missing_email", unique=True)
+    municipio_ciudad = models.CharField(max_length=50, null=False, default="missing_municipio_ciudad")
+    estado = models.CharField(max_length=50, null=False, default="missing_estado")
     contrasena = models.CharField(null=False, default="missing_password")
     activo = models.BooleanField(null=False, default=True)
     fecha_de_creacion = models.DateField(null=False, default=datetime.date.today())
