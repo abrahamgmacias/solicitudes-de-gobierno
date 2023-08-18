@@ -38,10 +38,9 @@ def solicitudView(request, solicitud_id):
             current_step = "Revisión"
             current_step_index = package_steps.index(current_step)
             previous_steps = package_steps[:current_step_index]
-            # comentario_form = ComentarioForm()
 
             return render(request, 'solicitud-individual.html', {
-                'solicitud_data': solicitud['data'], 
+                'solicitud_data': solicitud['data'],
                 'solicitud_historial': solicitud_historial['data'],
                 'package_steps': package_steps,
                 'current_step': current_step,
@@ -54,26 +53,46 @@ def solicitudView(request, solicitud_id):
             return render(request, 'missing-solicitud-individual.html')
 
 
-def agregarComentario(data, solicitud_id):
-    solicitud_instance = validarExistenciaSolicitud(solicitud_id)
+def gestionarSolicitud(request, solicitud_id=None):
+    try:
+        data = json.loads(request.body.decode())
+    except:
+        pass
 
-    if solicitud_instance["exists"]:
-        comentario = Comentario.objects.create(
-            solicitud_id=solicitud_id,
-            texto=data["texto"],
-            usuario_id=1
-        )
+    if request.method == 'GET':
+        response = solicitudView(request, solicitud_id)
 
-        comentario.save()
-                
-        return JsonResponse(status=200, data={'res': 'El comentario se agregó con éxito.'})
+    if request.method == 'POST':
+        pass
+
+    if request.method == 'PUT':
+        response = actualizarSolicitud(data, solicitud_id)
+
+    return response
+
+
+def actualizarSolicitud(data, solicitud_id):
+    solicitud = validarExistenciaSolicitud(solicitud_id)
+
+    print(data)
+
+    if solicitud["exists"]:
+        solicitud_instance = solicitud["solicitud"]
+
+        for key, value in data.items():
+            if key not in ['activo']:
+                if key == "estatus_id":
+                    registrarHistorialDeSolicitud(solicitud_id, value)
+                else: 
+                    if hasattr(Solicitud, key):
+                        solicitud_instance.update(**{key: value})
+            
+        solicitud_instance.first().save()
+
+        return JsonResponse(status=200, data={"res": "La solicitud se ha actualizado correctamente."})
 
     else:
-        return JsonResponse(status=400, data={'res': 'No se encontró una solicitud activa con esa ID.'}) 
-
-
-def editarSolicitudView(request, solicitud_id):
-    return render(request, 'base/index.html')
+        return JsonResponse(status=400, data={'res': solicitud['res']})
 
 
 def eliminarSolicitudView(request, solicitud_id):
@@ -185,27 +204,6 @@ def registrarHistorialDeSolicitud(solicitud_id, estatus_id):
     )
 
 
-def actualizarSolicitud(data, solicitud_id):
-    solicitud = validarExistenciaSolicitud(solicitud_id)
-
-    if solicitud["exists"]:
-        solicitud_instance = solicitud["solicitud"]
-
-        for key, value in data.items():
-            if key not in ['activo']:
-                if key == "estatus_id":
-                    registrarHistorialDeSolicitud(solicitud_id, value)
-                else: 
-                    if hasattr(Solicitud, key):
-                        solicitud_instance.update(**{key: value})
-            
-        solicitud_instance.first().save()
-
-        return JsonResponse(status=200, data={"res": "La solicitud se ha actualizado correctamente."})
-
-    else:
-        return JsonResponse(status=400, data={'res': solicitud['res']})
-
 
 # Incluir API 
 def registrarSolicitud(data):
@@ -255,16 +253,18 @@ def getDataSolicitud(solicitud_id):
             'id', 'informacion_adicional', 'direccion', 'estado', 'municipio_ciudad', 'codigo_postal', 'accion', 'espacio', 'prioridad', 'fecha_de_creacion' 
         ))[0]
 
+        titulos = {
+            'id', 'Información adicional', 'Dirección', 'Estado', 'Municipio o ciudad', 'Código postal', 'Fecha de creación', "Accion", "Espacio", "Prioridad",
+        }
+
         solicitud_data["accion"] = solicitud_instance[0].accion.nombre
         solicitud_data["espacio"] = solicitud_instance[0].espacio.nombre
         solicitud_data["prioridad"] = solicitud_instance[0].prioridad.nombre
 
-        return {'data': solicitud_data, 'res': 'Se obtuvó la información de manera exitosa.'}
+        return {'data': solicitud_data, 'res': 'Se obtuvó la información de manera exitosa.', 'titulos': titulos}
 
     else:
-        return {'data': None, 'res': 'No se encontró una solicitud con esa ID.'}
-
-
+        return {'data': None, 'res': 'No se encontró una solicitud con esa ID.', 'formatted_data': None}
 
 
 
@@ -299,6 +299,24 @@ def validarExistenciaComentario(comentario_id):
         return {'comentario': comentario_instance, 'exists': True}
     else:
         return {'comentario': None, 'exists': False, 'res': "No existe solicitud activa con esa ID."}
+
+
+def agregarComentario(data, solicitud_id):
+    solicitud_instance = validarExistenciaSolicitud(solicitud_id)
+
+    if solicitud_instance["exists"]:
+        comentario = Comentario.objects.create(
+            solicitud_id=solicitud_id,
+            texto=data["texto"],
+            usuario_id=1
+        )
+
+        comentario.save()
+                
+        return JsonResponse(status=200, data={'res': 'El comentario se agregó con éxito.'})
+
+    else:
+        return JsonResponse(status=400, data={'res': 'No se encontró una solicitud activa con esa ID.'}) 
 
 
 def eliminarComentario(comentario_id):
