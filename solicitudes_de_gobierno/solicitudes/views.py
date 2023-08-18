@@ -1,7 +1,8 @@
 import json
-from .forms import SolicitudForm
+import traceback
 from usuarios.models import Usuario
 from django.shortcuts import render, redirect
+from .forms import SolicitudForm
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from usuarios.views import validarExistenciaUsuario, getDataUsuario
@@ -37,6 +38,7 @@ def solicitudView(request, solicitud_id):
             current_step = "Revisión"
             current_step_index = package_steps.index(current_step)
             previous_steps = package_steps[:current_step_index]
+            # comentario_form = ComentarioForm()
 
             return render(request, 'solicitud-individual.html', {
                 'solicitud_data': solicitud['data'], 
@@ -44,12 +46,34 @@ def solicitudView(request, solicitud_id):
                 'package_steps': package_steps,
                 'current_step': current_step,
                 'previous_steps': previous_steps,
-                'comentarios': comentarios
+                'comentarios': comentarios,
+                # 'comentario_form': comentario_form
                 }
             )
         
         else: 
-            return render(request, 'missing-solicitud-individual.html',)
+            return render(request, 'missing-solicitud-individual.html')
+
+
+def agregarComentario(request, solicitud_id):
+    if request.method == 'POST':
+        solicitud_instance = validarExistenciaSolicitud(solicitud_id)
+
+        if solicitud_instance["exists"]:
+            data = json.loads(request.body.decode())
+            
+            comentario = Comentario.objects.create(
+                solicitud_id=solicitud_id,
+                texto=data["texto"],
+                usuario_id=1
+            )
+
+            comentario.save()
+                
+            return JsonResponse(status=200, data={'res': 'El comentario se agregó con éxito.'})
+
+        else:
+            return JsonResponse(status=400, data={'res': 'No se encontró una solicitud activa con esa ID.'}) 
 
 
 def editarSolicitudView(request, solicitud_id):
@@ -98,26 +122,6 @@ def recientesSolicitudesLocalesView(request):
 
     return render(request, 'solicitudes-recientes.html', { 'solicitudes': solicitudes['data'], 'res': solicitudes['res']})
 
-
-def manageSolicitudes(request, solicitud_id): 
-    try:
-        data = json.loads(request.body.decode())
-    except:
-        pass
-
-    if request.method == "GET":
-        response = getDataSolicitud(solicitud_id)
-
-    # if request.method == "POST":
-    #     response = registrarSolicitud(data)
-
-    if request.method == "PUT":
-        response = actualizarSolicitud(data, solicitud_id)
-    
-    if request.method == "DELETE":
-        response = eliminarSolicitud(solicitud_id)
-
-    return response
 
 
 # Add sort
@@ -279,25 +283,7 @@ def getComentarios(solicitud_id):
         return {'data': None, 'res': 'Actualmente no hay comentarios.'}
 
 
-def agregarComentario(data, solicitud_id):
-    solicitud_instance = validarExistenciaSolicitud(solicitud_id)
 
-    if solicitud_instance["exists"]:
-        try:
-            comentario = Comentario.objects.create(
-                solicitud_id=solicitud_id,
-                texto=data["texto"],
-                usuario_id=data["usuario_id"]
-            )
-            comentario.save()
-
-            return JsonResponse(data={"res": 'Se registró el comentario exitosamente.'}, status=200,)
-
-        except: 
-            return JsonResponse(data={"res": "No se pudo registrar el comentario. Intente de nuevo."}, status=400)
-
-    else: 
-        return JsonResponse(data={'res': solicitud_instance["res"]}, status=400)
 
 
 def validarExistenciaComentario(comentario_id):
