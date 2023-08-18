@@ -114,6 +114,34 @@
     .list-group-item {
         margin-left: 60px;
     }
+
+    #comentario-form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        height: 300px;
+        margin-top: 20px;
+    }
+
+    .comentario-input {
+        width: 50%;
+        height: 50px;
+        padding: 10px;
+        border: 1px solid #000;
+        border-radius: 10px;
+        resize: none;
+        margin-bottom: 10px;
+    }
+
+    .btn-enviar {
+        background-color: #007bff;
+        border-color: #007bff;
+        border-radius: 50px;
+        padding: 10px 20px;
+        color: white;
+        font-weight: bold;
+        margin-left: 45%;
+    }
 </style>
 
 {% bootstrap_javascript %}
@@ -163,6 +191,57 @@
                 alert("Petición cancelada.");
             }
         });
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.getElementById('comentario-form');
+        const commentBox = document.getElementById('comment-box');
+        const enviarButton = document.getElementById('enviar-btn');
+
+        form.addEventListener('submit', async function (event) {
+            event.preventDefault();
+            const textoComentario = commentBox.value;
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+            const solicitud_id = '{{solicitud_data.id}}'
+
+            if (textoComentario.trim() === '') {
+                return;
+            }
+
+            const response = await fetch(`/solicitudes/${solicitud_id}/agregar-comentario`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    // 'X-CSRFToken': getCookie('csrftoken') // 
+                    'X-CSRFToken': csrfToken
+
+                },
+                body: JSON.stringify({ texto: textoComentario })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    location.reload();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Ocurrió un error intentando publicar el comentario. Inténtelo más tarde.');
+                });
+        });
+
+        // function getCookie(name) {
+        //     var cookieValue = null;
+        //     if (document.cookie && document.cookie !== '') {
+        //         var cookies = document.cookie.split(';');
+        //         for (var i = 0; i < cookies.length; i++) {
+        //             var cookie = cookies[i].trim();
+        //             if (cookie.substring(0, name.length + 1) === (name + '=')) {
+        //                 cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        //                 break;
+        //             }
+        //         }
+        //     }
+        //     return cookieValue;
+        // }
     });
 </script>
 
@@ -226,5 +305,11 @@
         {% endif %}
     </ul>
 </div>
+
+<form id="comentario-form">
+    <textarea id="comment-box" class="comentario-input" rows="4"
+        placeholder="Escribe un comentario...">{{comentario_form.texto}}</textarea>
+    <button id="enviar-btn" class="btn btn-enviar">Enviar</button>
+</form>
 
 {% endblock %}
