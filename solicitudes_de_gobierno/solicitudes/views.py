@@ -26,7 +26,7 @@ def solicitudView(request, solicitud_id):
 
         if solicitud['data'] != None:
             solicitud_historial = getHistorialDeSolicitud(solicitud_id)
-            comentarios = getComentarios(solicitud_id)
+            comentarios = getComentarios(solicitud_id, 1)
 
             package_steps = [
                 "Registro",
@@ -54,25 +54,22 @@ def solicitudView(request, solicitud_id):
             return render(request, 'missing-solicitud-individual.html')
 
 
-def agregarComentario(request, solicitud_id):
-    if request.method == 'POST':
-        solicitud_instance = validarExistenciaSolicitud(solicitud_id)
+def agregarComentario(data, solicitud_id):
+    solicitud_instance = validarExistenciaSolicitud(solicitud_id)
 
-        if solicitud_instance["exists"]:
-            data = json.loads(request.body.decode())
+    if solicitud_instance["exists"]:
+        comentario = Comentario.objects.create(
+            solicitud_id=solicitud_id,
+            texto=data["texto"],
+            usuario_id=1
+        )
 
-            comentario = Comentario.objects.create(
-                solicitud_id=solicitud_id,
-                texto=data["texto"],
-                usuario_id=1
-            )
-
-            comentario.save()
+        comentario.save()
                 
-            return JsonResponse(status=200, data={'res': 'El comentario se agregó con éxito.'})
+        return JsonResponse(status=200, data={'res': 'El comentario se agregó con éxito.'})
 
-        else:
-            return JsonResponse(status=400, data={'res': 'No se encontró una solicitud activa con esa ID.'}) 
+    else:
+        return JsonResponse(status=400, data={'res': 'No se encontró una solicitud activa con esa ID.'}) 
 
 
 def editarSolicitudView(request, solicitud_id):
@@ -271,24 +268,28 @@ def getDataSolicitud(solicitud_id):
 
 
 
-def getComentarios(solicitud_id):
+def getComentarios(solicitud_id, usuario_id):
     comentarios_instance = Comentario.objects.select_related('usuario').filter(activo=True, solicitud_id=solicitud_id)
 
     if comentarios_instance.exists():
         comentarios_data = list(comentarios_instance.values(
-            'id', 'texto', 'fecha_de_creacion', 'solicitud_id', 'usuario'
+            'id', 'texto', 'fecha_de_creacion', 'solicitud_id', 'usuario', 'usuario_id'
         ))
 
         for comentario_instance, comentario_data in zip(comentarios_instance, comentarios_data):
             comentario_data["usuario"] = f'{comentario_instance.usuario.nombre} {comentario_instance.usuario.apellido}'
+            
+            # Checar si el comentario corresponde al usuario y dar privilegio de eliminar
+            if comentario_data["usuario_id"] == usuario_id:
+                comentario_data['removible'] = True
+
+            else:
+                comentario_data['removible'] = False
 
         return {'data': comentarios_data, 'res': 'Se obtuvó la información de manera exitosa.'}
 
     else:
         return {'data': None, 'res': 'Actualmente no hay comentarios.'}
-
-
-
 
 
 def validarExistenciaComentario(comentario_id):
@@ -334,8 +335,7 @@ def actualizarComentario(data, comentario_id):
     return JsonResponse(data={'res': comentario["res"]}, status=400)
 
 
-@csrf_exempt
-def manageComentarios(request, solicitud_id):
+def gestionarComentarios(request, solicitud_id=None, comentario_id=None):
     try:
         data = json.loads(request.body.decode())
     except:
@@ -345,11 +345,6 @@ def manageComentarios(request, solicitud_id):
         response = agregarComentario(data, solicitud_id)
 
     if request.method == "DELETE":
-        comentario_id = request.GET.get('id')
-        response = eliminarComentario(comentario_id)
-
-    if request.method == "PUT":
-        comentario_id = request.GET.get('id')
-        response = actualizarComentario(data, comentario_id)
+        response = eliminarComentario(comentario_id) 
 
     return response
