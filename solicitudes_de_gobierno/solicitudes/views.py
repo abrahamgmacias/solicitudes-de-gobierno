@@ -47,7 +47,6 @@ def solicitudView(request, solicitud_id):
                 'current_step': current_step,
                 'previous_steps': previous_steps,
                 'comentarios': comentarios,
-                # 'comentario_form': comentario_form
                 }
             )
         
@@ -61,7 +60,7 @@ def agregarComentario(request, solicitud_id):
 
         if solicitud_instance["exists"]:
             data = json.loads(request.body.decode())
-            
+
             comentario = Comentario.objects.create(
                 solicitud_id=solicitud_id,
                 texto=data["texto"],
@@ -273,11 +272,17 @@ def getDataSolicitud(solicitud_id):
 
 
 def getComentarios(solicitud_id):
-    comentarios_instance = Comentario.objects.filter(activo=True, solicitud_id=solicitud_id)
+    comentarios_instance = Comentario.objects.select_related('usuario').filter(activo=True, solicitud_id=solicitud_id)
 
     if comentarios_instance.exists():
-        comentarios = list(comentarios_instance.values())
-        return {'data': comentarios, 'res': 'Se obtuvó la información de manera exitosa.'}
+        comentarios_data = list(comentarios_instance.values(
+            'id', 'texto', 'fecha_de_creacion', 'solicitud_id', 'usuario'
+        ))
+
+        for comentario_instance, comentario_data in zip(comentarios_instance, comentarios_data):
+            comentario_data["usuario"] = f'{comentario_instance.usuario.nombre} {comentario_instance.usuario.apellido}'
+
+        return {'data': comentarios_data, 'res': 'Se obtuvó la información de manera exitosa.'}
 
     else:
         return {'data': None, 'res': 'Actualmente no hay comentarios.'}
