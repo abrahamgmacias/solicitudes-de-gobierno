@@ -181,6 +181,18 @@
         font-size: 16px;
         font-family: "Montserrat", sans-serif;
     }
+
+    .delete-comentario {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 5px;
+    }
+
+    .delete-link {
+        color: red;
+        text-decoration: underline;
+        cursor: pointer;
+    }
 </style>
 
 {% bootstrap_javascript %}
@@ -247,7 +259,7 @@
                 return;
             }
 
-            const response = await fetch(`/solicitudes/${solicitud_id}/agregar-comentario`, {
+            const response = await fetch(`/solicitudes/${solicitud_id}/comentarios`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -281,6 +293,40 @@
         //     }
         //     return cookieValue;
         // }
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const deleteLinks = document.querySelectorAll('.delete-link');
+
+        deleteLinks.forEach(link => {
+            link.addEventListener('click', function (event) {
+                event.preventDefault();
+                const comentario_id = this.getAttribute('data-comentario-id');
+                const confirmation = confirm('¿Deseas eliminar este comentario?');
+                const solicitud_id = '{{solicitud_data.id}}';
+                const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+                if (confirmation) {
+                    fetch(`/solicitudes/${solicitud_id}/comentarios/${comentario_id}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            // 'X-CSRFToken': getCookie('csrftoken') // 
+                            'X-CSRFToken': csrfToken
+                        }
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            alert('El comentario fue eliminado con éxito.')
+                            location.reload()
+                        })
+                        .catch(error => {
+                            console.log(error)
+                            alert('Hubo un error intentando eliminar el comentario. Inténtelo más tarde.')
+                        });
+                }
+            });
+        });
     });
 </script>
 
@@ -347,6 +393,11 @@
             <span class="comentario-date">{{ comentario.fecha_de_creacion }}</span>
         </div>
         <div class="comentario-text">{{ comentario.texto }}</div>
+        {% if comentario.removible %}
+        <div class="delete-comentario">
+            <a href="#" class="delete-link" data-comentario-id="{{ comentario.id }}">eliminar</a>
+        </div>
+        {% endif %}
     </div>
     {% endfor %}
     {% endif %}
