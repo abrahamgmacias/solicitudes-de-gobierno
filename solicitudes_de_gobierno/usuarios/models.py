@@ -1,11 +1,12 @@
 from django.db import models
+from django.utils import timezone
 import datetime
 
 # Create your models here.
 class TipoDeUsuario(models.Model):
     nombre = models.CharField(max_length=20, null=False)
     activo = models.BooleanField(null=False, default=True)
-    fecha_de_creacion = models.DateField(null=False, default=datetime.date.today())
+    fecha_de_creacion = models.DateTimeField(null=False, default=timezone.now)
 
     def __str__(self):
         return self.nombre
@@ -30,7 +31,7 @@ class Usuario(models.Model):
     estado = models.CharField(max_length=50, null=False, default="missing_estado")
     contrasena = models.CharField(null=False, default="missing_password")
     activo = models.BooleanField(null=False, default=True)
-    fecha_de_creacion = models.DateField(null=False, default=datetime.date.today())
+    fecha_de_creacion = models.DateTimeField(null=False, default=timezone.now)
 
     def __str__(self):
         return self.nombre
