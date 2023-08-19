@@ -1,11 +1,12 @@
 from django.db import models
 from usuarios.models import Usuario
+from django.utils import timezone
 import datetime
 
 class Accion(models.Model):
     nombre = models.CharField(max_length=100, null=False, unique=True)
     activo = models.BooleanField(null=False, default=True)
-    fecha_de_creacion = models.DateField(null=False, default=datetime.date.today())
+    fecha_de_creacion = models.DateTimeField(null=False, default=timezone.now)
 
     class Meta:
         verbose_name_plural = "acciones"
@@ -16,7 +17,7 @@ class Accion(models.Model):
 class Espacio(models.Model):
     nombre = models.CharField(max_length=100, null=False, unique=True)
     activo = models.BooleanField(null=False, default=True)
-    fecha_de_creacion = models.DateField(null=False, default=datetime.date.today())
+    fecha_de_creacion = models.DateTimeField(null=False, default=timezone.now)
 
     def __str__(self):
         return self.nombre
@@ -24,7 +25,7 @@ class Espacio(models.Model):
 class Prioridad(models.Model):
     nombre = models.CharField(max_length=100, null=False, unique=True)
     activo = models.BooleanField(null=False, default=True)
-    fecha_de_creacion = models.DateField(null=False, default=datetime.date.today())
+    fecha_de_creacion = models.DateTimeField(null=False, default=timezone.now)
 
     class Meta:
         verbose_name_plural = "prioridades"
@@ -59,7 +60,7 @@ class Solicitud(models.Model):
         on_delete=models.CASCADE
     )
     activo = models.BooleanField(null=False, default=True)
-    fecha_de_creacion = models.DateField(null=False, default=datetime.date.today())
+    fecha_de_creacion = models.DateTimeField(null=False, default=timezone.now)
 
     class Meta:
         verbose_name = "solicitud"
@@ -78,7 +79,7 @@ class Comentario(models.Model):
         null=False,
         on_delete=models.CASCADE
     )
-    fecha_de_creacion= models.DateField(null=False, default=datetime.date.today())
+    fecha_de_creacion= models.DateTimeField(null=False, default=timezone.now)
 
 class Reporte(models.Model):
     solicitud = models.ForeignKey(
@@ -92,12 +93,13 @@ class Reporte(models.Model):
         null=False,
         on_delete=models.CASCADE
     )
-    fecha_de_creacion= models.DateField(null=False, default=datetime.date.today())
+    fecha_de_creacion= models.DateTimeField(null=False, default=timezone.now)
 
 class Estatus(models.Model):
     nombre = models.CharField(null=False, unique=True)
+    descripcion = models.CharField(null=False, max_length=200, default="Missing descripcion")
     activo = models.BooleanField(null=False, default=True)
-    fecha_de_creacion = models.DateField(null=False, default=datetime.date.today())
+    fecha_de_creacion = models.DateTimeField(null=False, default=timezone.now)
 
     class Meta:
         verbose_name = "estatus"
@@ -115,7 +117,7 @@ class HistorialDeSolicitud(models.Model):
         on_delete=models.CASCADE
     )
     activo = models.BooleanField(null=False, default=True)
-    fecha_de_creacion = models.DateField(null=False, default=datetime.date.today())
+    fecha_de_creacion = models.DateTimeField(null=False, default=timezone.now)
 
     class Meta:
         verbose_name = "historial_de_solicitud"
