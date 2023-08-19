@@ -117,35 +117,48 @@
         "model": "solicitudes.estatus",
         "pk": 1,
         "fields": {
-            "nombre": "Iniciado"
+            "nombre": "Iniciado",
+            "descripcion": "La solicitud se registró con éxito."
         }
     },
     {
         "model": "solicitudes.estatus",
         "pk": 2,
         "fields": {
-            "nombre": "En revisión"
+            "nombre": "En revisión",
+            "descripcion": "Se asignó un analista y el caso se encuentra en revisión."
         }
     },
     {
         "model": "solicitudes.estatus",
         "pk": 3,
         "fields": {
-            "nombre": "Revisado - Aprobado"
+            "nombre": "Revisado - Aprobado",
+            "descripcion": "El caso fue aprobado por el analista y un operador ha sido despachado."
         }
     },
     {
         "model": "solicitudes.estatus",
         "pk": 4,
         "fields": {
-            "nombre": "Revisado - Cancelado"
+            "nombre": "Revisado - Cancelado",
+            "descripcion": "El caso fue rechazado por el analista. Revise los comentarios para retroalimentación."
         }
     },
     {
         "model": "solicitudes.estatus",
         "pk": 5,
         "fields": {
-            "nombre": "Devuelto al solicitante - Faltan datos"
+            "nombre": "Devuelto al solicitante - Faltan datos",
+            "descripcion": "El caso fue devuelto al solicitante dada una insuficencia o incongruencia en los datos. Revise los comentarios para retroalimentación."
+        }
+    },
+    {
+        "model": "solicitudes.estatus",
+        "pk": 6,
+        "fields": {
+            "nombre": "Completado",
+            "descripcion": "El caso ha sido cerrado con éxito."
         }
     },
     {
