@@ -34,7 +34,7 @@
     {% for solicitud in solicitudes %}
     <div class="list-container">
         <li>
-            <a href="{% url 'solicitudes:solicitud-id' solicitud.id  %}">
+            <a href="{% url 'solicitudes:gestionar-solicitudes' solicitud.id  %}">
                 {{ solicitud.titulo }}
             </a>
         </li>
