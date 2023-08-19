@@ -135,6 +135,12 @@ def recientesSolicitudesLocalesView(request):
         'activo': True
     })
 
+    if solicitudes['data'] != None:
+        for solicitud in solicitudes['data']:
+            solicitud['titulo'] = formatTituloSolicitud(solicitud)
+
+    print(solicitudes['data'])
+
     return render(request, 'solicitudes-recientes.html', { 'solicitudes': solicitudes['data'], 'res': solicitudes['res']})
 
 
@@ -166,11 +172,23 @@ def getSolicitudesDeUsuario(usuario_id):
 
 
 def getSolicitudesPorParametros(condiciones_de_filtro):
-    solicitudes = Solicitud.objects.filter(**condiciones_de_filtro)
+    solicitudes = Solicitud.objects.select_related('accion', 'espacio', 'prioridad').filter(**condiciones_de_filtro)
 
     if solicitudes.exists():
-        return { 'res': f'Existen {len(solicitudes)} solicitudes activas cerca de ti.', 'data': list(solicitudes.values())}
-    
+        solicitudes_data = list(solicitudes.values(
+            'id', 'informacion_adicional', 'direccion', 'estado', 'municipio_ciudad', 'codigo_postal', 'accion', 'espacio', 'prioridad', 'fecha_de_creacion' 
+        ))
+
+        print(solicitudes)
+        print(solicitudes_data)
+
+        for solicitud_inst, solicitud_data in zip(solicitudes, solicitudes_data):
+            solicitud_data["accion"] = solicitud_inst.accion.nombre
+            solicitud_data["espacio"] = solicitud_inst.espacio.nombre
+            solicitud_data["prioridad"] = solicitud_inst.prioridad.nombre
+
+        return { 'res': f'Existen {len(solicitudes)} solicitudes activas cerca de ti.', 'data': solicitudes_data }
+
     else: 
         return { 'res': 'Actualmente no hay solicitudes activas cerca de ti.', 'data': None}
 
