@@ -7,6 +7,7 @@
 <style>
     .custom-form {
         margin-left: 70px;
+        margin-bottom: 20px;
     }
 
     .form-label-bold {
@@ -52,11 +53,16 @@
         margin-top: 20px;
         margin-left: 400px;
     }
+
+    .container {
+        margin-top: 20px;
+    }
 </style>
 
 {% bootstrap_javascript %}
 {% csrf_token %}
 <script>
+    // Agrega boton para registrar y guardarlo en la base de datos
     document.addEventListener("DOMContentLoaded", function () {
         document.getElementById('registrarButton').addEventListener('click', function () {
             const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
@@ -91,18 +97,21 @@
 <h2>Registro de solicitud</h2>
 <i>Llene todas y cada una de las casillas con la información requerida.</i>
 
-
 <form method="post" class="custom-form" id="registrarForm">
     {% csrf_token %}
 
-    {% for field in form %}
-    {% if field.name != 'usuario' %}
-    <div class="mb-3">
-        <label class="form-label-bold">{{ field.label_tag }}</label>
-        {{ field }}
+    <div class="container">
+        {% for field in form %}
+        {% if field.name != 'usuario' %}
+        {% if key != 'usuario_id' %}
+        <div class="mb-3">
+            <label class="form-label-bold">{{ field.label_tag }}</label>
+            {{ field }}
+        </div>
+        {% endif %}
+        {% endif %}
+        {% endfor %}
     </div>
-    {% endif %}
-    {% endfor %}
 
     <div class="d-flex justify-content-end">
         <button type="submit" class="btn btn-primary rounded-pill" id="registrarButton">Registrar</button>

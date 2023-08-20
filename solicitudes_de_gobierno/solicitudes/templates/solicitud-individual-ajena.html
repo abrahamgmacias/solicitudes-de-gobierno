@@ -345,6 +345,7 @@
     <div class="grid-container">
         {% for key, value in solicitud_data.items %}
         {% if key != 'id' %}
+        {% if key != 'usuario_id' %}
         <div class="rectangular-section">
             <p class="key">{{ key }}</p>
             <div class="editable-field" data-key="{{key}}">
@@ -354,6 +355,7 @@
                 </div>
             </div>
         </div>
+        {% endif %}
         {% endif %}
         {% endfor %}
     </div>
