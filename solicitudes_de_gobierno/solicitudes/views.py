@@ -25,24 +25,20 @@ def solicitudView(request, solicitud_id):
         solicitud = getDataSolicitud(solicitud_id)
 
         if solicitud['data'] != None:
-            solicitud_historial = getHistorialDeSolicitud(solicitud_id)
+            solicitud_historial = getHistorialDeSolicitud(solicitud_id)['data']
+            historial_steps = getHistorialSteps()
             comentarios = getComentarios(solicitud_id, 1)
 
-            package_steps = [
-                "Registro",
-                "Revisión",
-                "Retroalimentación",
-                "Completado",
-            ]
+            current_step = solicitud_historial[-1]["step"]
+            current_step_index = historial_steps.index(current_step)
+            previous_steps = historial_steps[:current_step_index]
 
-            current_step = "Revisión"
-            current_step_index = package_steps.index(current_step)
-            previous_steps = package_steps[:current_step_index]
+            print(solicitud_historial)
 
             return render(request, 'solicitud-individual.html', {
                 'solicitud_data': solicitud['data'],
-                'solicitud_historial': solicitud_historial['data'],
-                'package_steps': package_steps,
+                'solicitud_historial': solicitud_historial,
+                'historial_steps': historial_steps,
                 'current_step': current_step,
                 'previous_steps': previous_steps,
                 'comentarios': comentarios,
@@ -73,8 +69,6 @@ def gestionarSolicitud(request, solicitud_id=None):
 
 def actualizarSolicitud(data, solicitud_id):
     solicitud = validarExistenciaSolicitud(solicitud_id)
-
-    print(data)
 
     if solicitud["exists"]:
         solicitud_instance = solicitud["solicitud"]
@@ -116,7 +110,8 @@ def registrarSolicitudView(request):
         form.usuario = 1
 
         if form.is_valid():
-            form.save() 
+            solicitud = form.save() 
+            historial = registrarHistorialDeSolicitud(solicitud.id, 1)
 
         return JsonResponse(status=200, data={'res': 'Se registró exitosamente la solicitud.'})
 
@@ -138,8 +133,6 @@ def recientesSolicitudesLocalesView(request):
     if solicitudes['data'] != None:
         for solicitud in solicitudes['data']:
             solicitud['titulo'] = formatTituloSolicitud(solicitud)
-
-    print(solicitudes['data'])
 
     return render(request, 'solicitudes-recientes.html', { 'solicitudes': solicitudes['data'], 'res': solicitudes['res']})
 
@@ -179,9 +172,6 @@ def getSolicitudesPorParametros(condiciones_de_filtro):
             'id', 'informacion_adicional', 'direccion', 'estado', 'municipio_ciudad', 'codigo_postal', 'accion', 'espacio', 'prioridad', 'fecha_de_creacion' 
         ))
 
-        print(solicitudes)
-        print(solicitudes_data)
-
         for solicitud_inst, solicitud_data in zip(solicitudes, solicitudes_data):
             solicitud_data["accion"] = solicitud_inst.accion.nombre
             solicitud_data["espacio"] = solicitud_inst.espacio.nombre
@@ -214,13 +204,24 @@ def registrarHistorialDeSolicitud(solicitud_id, estatus_id):
     historial_instance = HistorialDeSolicitud.objects.filter(estatus_id=estatus_id, solicitud_id=solicitud_id, activo=True)
 
     if historial_instance.exists():
-        return
+        return JsonResponse(status=400, data={'res': 'No se actualizó el historial dado un nulo cambio en el estatusd de la solicitud.'})
 
-    return HistorialDeSolicitud.objects.create(
+    historial_entry = HistorialDeSolicitud.objects.create(
         estatus_id=estatus_id,
         solicitud_id=solicitud_id,
     )
+    historial_entry.save()
 
+    return JsonResponse(status=200, data={'res': 'Se actualizó el historial con éxito.'})
+
+
+def getHistorialSteps():
+    return [
+        "Registro",
+        "En revisión",
+        "Retroalimentación",
+        "Completado",
+    ]
 
 
 # Incluir API 
@@ -257,7 +258,23 @@ def getHistorialDeSolicitud(solicitud_id):
     )
 
     for hist, hist_data in zip(historial_de_solicitudes, historial_data):
+        estatus = hist_data['estatus']
+        if estatus == 1:
+            hist_data['step'] = "Registro"
+
+        if estatus == 2:
+            hist_data['step'] = "En revisión"
+
+        if estatus in [3, 4, 5]:
+            hist_data['step'] = "Retroalimentación"
+
+        if estatus == 6:
+            hist_data['step'] = "Completado"
+
         hist_data["estatus"] = hist.estatus.nombre
+        hist_data['descripcion'] = hist.estatus.descripcion
+
+        print(hist_data['fecha_de_creacion'])
 
     return {"data": historial_data, 'res': 'Se obtuvo el historial con éxito.'}
 
@@ -307,7 +324,7 @@ def getComentarios(solicitud_id, usuario_id):
         return {'data': comentarios_data, 'res': 'Se obtuvó la información de manera exitosa.'}
 
     else:
-        return {'data': None, 'res': 'Actualmente no hay comentarios.'}
+        return {'data': None, 'res': 'Actualmente no hay comentarios. Sé el primero en escribir uno...'}
 
 
 def validarExistenciaComentario(comentario_id):
