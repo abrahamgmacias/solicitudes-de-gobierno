@@ -36,9 +36,9 @@
     }
 </style>
 
-<h2>Bienvenido, {{ usuario.nombre }} {{ usuario.apellido }}... </h2>
+<h2>Bienvenido, {{ usuario.nombre }} {{ usuario.apellido }} </h2>
 <div class="line"></div>
-<p><i>Tus herramientas como ciudadano.</i></p>
+<p><i>Tus herramientas como ciudadano...</i></p>
 
 <div class="box-container">
     <a href="{% url 'solicitudes:ver-solicitudes' %}">
@@ -50,7 +50,7 @@
     <a href="{% url 'solicitudes:solicitudes-locales' %}">
         <div class="box-opciones" name="solicitudes-recientes">
             <strong>Solicitudes recientes en {{ usuario.municipio_ciudad }}</strong>
-            <p>Ve las últimas peticiones en tu localidad.</p>
+            <p>Ver las últimas peticiones en tu localidad.</p>
         </div>
     </a>
     <a href="{% url 'solicitudes:registrar-solicitud' %}">
