@@ -33,9 +33,7 @@ def solicitudView(request, solicitud_id):
             current_step_index = historial_steps.index(current_step)
             previous_steps = historial_steps[:current_step_index]
 
-            print(solicitud_historial)
-
-            return render(request, 'solicitud-individual.html', {
+            context = {
                 'solicitud_data': solicitud['data'],
                 'solicitud_historial': solicitud_historial,
                 'historial_steps': historial_steps,
@@ -43,7 +41,12 @@ def solicitudView(request, solicitud_id):
                 'previous_steps': previous_steps,
                 'comentarios': comentarios,
                 }
-            )
+
+            # Fake usuario
+            if solicitud['data']['usuario_id'] != 1:
+                return render(request, 'solicitud-individual-ajena.html', context=context)
+
+            return render(request, 'solicitud-individual.html', context=context)
         
         else: 
             return render(request, 'missing-solicitud-individual.html')
@@ -283,9 +286,9 @@ def getDataSolicitud(solicitud_id):
     solicitud = validarExistenciaSolicitud(solicitud_id)
 
     if solicitud['exists']:
-        solicitud_instance = solicitud['solicitud'].select_related('accion', 'espacio', 'prioridad')
+        solicitud_instance = solicitud['solicitud'].select_related('accion', 'espacio', 'prioridad', 'usuario')
         solicitud_data = list(solicitud_instance.values(
-            'id', 'informacion_adicional', 'direccion', 'estado', 'municipio_ciudad', 'codigo_postal', 'accion', 'espacio', 'prioridad', 'fecha_de_creacion' 
+            'id', 'informacion_adicional', 'direccion', 'estado', 'municipio_ciudad', 'codigo_postal', 'accion', 'espacio', 'prioridad', 'fecha_de_creacion', 'usuario_id'
         ))[0]
 
         titulos = {
