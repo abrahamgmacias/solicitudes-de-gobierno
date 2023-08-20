@@ -12,6 +12,7 @@
 
     .form-label-bold {
         font-weight: bold;
+        font-family: 'Montserrat', sans-serif;
     }
 
     .custom-input {
@@ -25,7 +26,7 @@
         margin-bottom: 5px;
     }
 
-    .h2 {
+    h2 {
         color: black;
         margin-bottom: 5px;
     }
@@ -95,7 +96,8 @@
 
 
 <h2>Registro de solicitud</h2>
-<i>Llene todas y cada una de las casillas con la información requerida.</i>
+<div class="line"></div>
+<p><i>Llene todas y cada una de las casillas con la información requerida.</i></p>
 
 <form method="post" class="custom-form" id="registrarForm">
     {% csrf_token %}
