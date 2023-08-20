@@ -11,7 +11,7 @@
         grid-gap: 20px;
         margin-left: 80px;
         margin-top: 25px;
-        margin-bottom: 30px;
+        margin-bottom: 10px;
         margin-right: 70px;
     }
 
@@ -92,6 +92,10 @@
         margin-left: 1270px;
     }
 
+    .btn-primary.rounded-pill {
+        margin-left: 45%;
+    }
+
     .btn-danger.custom-delete {
         background-color: #ff0000;
         border-color: #ff0000;
@@ -99,12 +103,18 @@
         padding: 10px 20px;
         color: white;
         font-weight: bold;
-        margin-left: 1160px;
-        margin-bottom: 200;
+        margin-left: 82%;
+        margin-bottom: 30px;
+        font-family: 'Montserrat', sans-serif;
+        font-size: 14px;
     }
 
     .btn-danger.custom-delete:hover {
         background-color: #ac0000;
+    }
+
+    .delete-container {
+        margin-bottom: 20px;
     }
 
     .btn-primary.rounded-pill:hover {
@@ -119,7 +129,7 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        height: 300px;
+        height: 200px;
         margin-top: 20px;
     }
 
@@ -133,16 +143,6 @@
         margin-bottom: 10px;
         font-size: 16px;
         font-family: "Montserrat", sans-serif;
-    }
-
-    .btn-enviar {
-        background-color: #007bff;
-        border-color: #007bff;
-        border-radius: 50px;
-        padding: 10px 20px;
-        color: white;
-        font-weight: bold;
-        margin-left: 45%;
     }
 
     .comentario-section {
@@ -232,9 +232,6 @@
         var timelinePoints = document.querySelectorAll('.timeline-point');
         var historial_data = "{{solicitud_historial|safe}}";
 
-        console.log(JSON.parse(historial_data));
-
-
         timelinePoints.forEach(function (point, index) {
             console.log(point)
             //     var stepDescripcion = solicitudHistorial[index].descripcion;
@@ -251,39 +248,41 @@
         });
     });
 
-    // document.addEventListener('DOMContentLoaded', function () {
-    //     const deleteButton = document.getElementById('deleteButton');
+    // Habilita el botón para eliminar la solicitud
+    document.addEventListener('DOMContentLoaded', function () {
+        const deleteButton = document.getElementById('deleteButton');
 
-    //     deleteButton.addEventListener('click', function () {
-    //         const confirmation = confirm("Estás seguro de que quieres eliminar esta solicitud? Esta acción no es reversible.");
+        deleteButton.addEventListener('click', function () {
+            const confirmation = confirm("Estás seguro de que quieres eliminar esta solicitud? Esta acción no es reversible.");
 
-    //         if (confirmation) {
-    //             const urlParts = window.location.pathname.split('/');
-    //             const solicitud_id = urlParts[3];
+            if (confirmation) {
+                const urlParts = window.location.pathname.split('/');
+                const solicitud_id = urlParts[3];
 
-    //             const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+                const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
-    //             fetch(`${solicitud_id}/eliminar`, {
-    //                 method: 'DELETE',
-    //                 headers: {
-    //                     'X-CSRFToken': csrfToken,
-    //                 }
-    //             })
-    //                 .then(response => response.json())
-    //                 .then(data => {
-    //                     alert("La solicitud fue eliminada exitosamente.");
-    //                     location.reload();
-    //                 })
-    //                 .catch(error => {
-    //                     console.error('Error:', error);
-    //                     alert('Ocurrió un error intentando eliminar la solicitud. Intente más tarde.');
-    //                 });
-    //         } else {
-    //             alert("Petición cancelada.");
-    //         }
-    //     });
-    // });
+                fetch(`/solicitudes/mis-solicitudes/${solicitud_id}/`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRFToken': csrfToken,
+                    }
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        alert("La solicitud fue eliminada exitosamente.");
+                        window.location.href = '/solicitudes/mis-solicitudes/'
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Ocurrió un error intentando eliminar la solicitud. Intente más tarde.');
+                    });
+            } else {
+                alert("Petición cancelada.");
+            }
+        });
+    });
 
+    // Habilita el botón de enviar comentario
     document.addEventListener('DOMContentLoaded', function () {
         const form = document.getElementById('comentario-form');
         const commentBox = document.getElementById('comment-box');
@@ -335,6 +334,7 @@
         // }
     });
 
+    // Habilita el link en el comentario para eliminarlo
     document.addEventListener('DOMContentLoaded', function () {
         const deleteLinks = document.querySelectorAll('.delete-link');
 
@@ -479,6 +479,10 @@
         {% endif %}
         {% endfor %}
     </div>
+    <div class="delete-container">
+        <button class="btn btn-danger custom-delete me-2" id="deleteButton">Eliminar solicitud</button>
+    </div>
+
 </div>
 
 <!-- Historial -->
@@ -534,9 +538,9 @@
 <div class="container">
     <form id="comentario-form">
         <textarea id="comment-box" class="comentario-input" rows="4" placeholder="Escribe un comentario..."></textarea>
-        <button id="enviar-btn" class="btn btn-enviar">Enviar</button>
+        <button type="submit" class="btn btn-primary rounded-pill" id="enviar-btn">Enviar</button>
     </form>
-</div>
 
+</div>
 
 {% endblock %}
