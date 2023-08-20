@@ -61,8 +61,8 @@ def gestionarSolicitud(request, solicitud_id=None):
     if request.method == 'GET':
         response = solicitudView(request, solicitud_id)
 
-    if request.method == 'POST':
-        pass
+    if request.method == 'DELETE':
+        response = eliminarSolicitudView(solicitud_id)
 
     if request.method == 'PUT':
         response = actualizarSolicitud(data, solicitud_id)
@@ -92,19 +92,18 @@ def actualizarSolicitud(data, solicitud_id):
         return JsonResponse(status=400, data={'res': solicitud['res']})
 
 
-def eliminarSolicitudView(request, solicitud_id):
-    if request.method == 'DELETE':  
-        solicitud = validarExistenciaSolicitud(solicitud_id)
+def eliminarSolicitudView(solicitud_id):
+    solicitud = validarExistenciaSolicitud(solicitud_id)
 
-        if solicitud['exists']:
-            solicitud_instance = solicitud['solicitud'].first()
-            solicitud_instance.activo = False
-            solicitud_instance.save()
+    if solicitud['exists']:
+        solicitud_instance = solicitud['solicitud'].first()
+        solicitud_instance.activo = False
+        solicitud_instance.save()
 
-            return JsonResponse(status=200, data={"res": "Se eliminó la solicitud correctamente."})
+        return JsonResponse(status=200, data={"res": "Se eliminó la solicitud correctamente."})
                 
-        else: 
-            return JsonResponse(status=404, data={"res": solicitud['data']})
+    else: 
+        return JsonResponse(status=404, data={"res": solicitud['data']})
 
 
 def registrarSolicitudView(request):
@@ -276,8 +275,6 @@ def getHistorialDeSolicitud(solicitud_id):
 
         hist_data["estatus"] = hist.estatus.nombre
         hist_data['descripcion'] = hist.estatus.descripcion
-
-        print(hist_data['fecha_de_creacion'])
 
     return {"data": historial_data, 'res': 'Se obtuvo el historial con éxito.'}
 
