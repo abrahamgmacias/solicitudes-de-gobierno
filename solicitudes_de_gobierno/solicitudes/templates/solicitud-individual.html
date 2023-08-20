@@ -43,16 +43,15 @@
     .timeline-point {
         width: 15px;
         height: 15px;
-        background-color: blue;
+        background-color: rgb(58, 58, 58);
         border-radius: 50%;
         border: 2px solid black;
-        /* Add a black border */
         z-index: 1;
         cursor: pointer;
     }
 
     .timeline-line {
-        width: 97%;
+        width: 96%;
         height: 2px;
         position: absolute;
         top: 50%;
@@ -63,12 +62,12 @@
     }
 
     .timeline-point.active {
-        background-color: green;
+        background-color: #366592;
         border-color: black;
     }
 
     .timeline-point.completed {
-        background-color: yellow;
+        background-color: #036b56;
         border-color: black;
     }
 
@@ -112,10 +111,6 @@
         background-color: #0061c9;
     }
 
-    .custom-container {
-        margin-top: 50px;
-    }
-
     .list-group-item {
         margin-left: 60px;
     }
@@ -154,7 +149,6 @@
         display: flex;
         flex-direction: column;
         gap: 20px;
-        margin-top: 20px;
     }
 
     .comentario-box {
@@ -218,56 +212,77 @@
         justify-content: center;
         height: 100%;
     }
+
+    li {
+        padding: 5px;
+    }
+
+    li::before {
+        content: "";
+        display: inline-block;
+        width: 20px;
+    }
 </style>
 
 {% bootstrap_javascript %}
 {% csrf_token %}
 <script>
+    // Muestra información del paso actual en la timeline
     document.addEventListener('DOMContentLoaded', function () {
         var timelinePoints = document.querySelectorAll('.timeline-point');
+        var historial_data = "{{solicitud_historial|safe}}";
+
+        console.log(JSON.parse(historial_data));
+
+
         timelinePoints.forEach(function (point, index) {
-            var stepInfo = "{{ package_steps|safe }}".split(',')[index].trim();
-            new bootstrap.Popover(point, {
-                title: 'Step Information',
-                content: stepInfo,
-                trigger: 'hover',
-                placement: 'bottom'
-            });
+            console.log(point)
+            //     var stepDescripcion = solicitudHistorial[index].descripcion;
+            //     var stepTitulo = solicitudHistorial[index].step;
+
+            //     console.log()
+
+            //     new bootstrap.Popover(point, {
+            //         title: stepTitulo,
+            //         content: stepDescripcion,
+            //         trigger: 'hover',
+            //         placement: 'bottom'
+            //     });
         });
     });
 
-    document.addEventListener('DOMContentLoaded', function () {
-        const deleteButton = document.getElementById('deleteButton');
+    // document.addEventListener('DOMContentLoaded', function () {
+    //     const deleteButton = document.getElementById('deleteButton');
 
-        deleteButton.addEventListener('click', function () {
-            const confirmation = confirm("Estás seguro de que quieres eliminar esta solicitud? Esta acción no es reversible.");
+    //     deleteButton.addEventListener('click', function () {
+    //         const confirmation = confirm("Estás seguro de que quieres eliminar esta solicitud? Esta acción no es reversible.");
 
-            if (confirmation) {
-                const urlParts = window.location.pathname.split('/');
-                const solicitud_id = urlParts[3];
+    //         if (confirmation) {
+    //             const urlParts = window.location.pathname.split('/');
+    //             const solicitud_id = urlParts[3];
 
-                const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    //             const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
-                fetch(`${solicitud_id}/eliminar`, {
-                    method: 'DELETE',
-                    headers: {
-                        'X-CSRFToken': csrfToken,
-                    }
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        alert("La solicitud fue eliminada exitosamente.");
-                        location.reload();
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert('Ocurrió un error intentando eliminar la solicitud. Intente más tarde.');
-                    });
-            } else {
-                alert("Petición cancelada.");
-            }
-        });
-    });
+    //             fetch(`${solicitud_id}/eliminar`, {
+    //                 method: 'DELETE',
+    //                 headers: {
+    //                     'X-CSRFToken': csrfToken,
+    //                 }
+    //             })
+    //                 .then(response => response.json())
+    //                 .then(data => {
+    //                     alert("La solicitud fue eliminada exitosamente.");
+    //                     location.reload();
+    //                 })
+    //                 .catch(error => {
+    //                     console.error('Error:', error);
+    //                     alert('Ocurrió un error intentando eliminar la solicitud. Intente más tarde.');
+    //                 });
+    //         } else {
+    //             alert("Petición cancelada.");
+    //         }
+    //     });
+    // });
 
     document.addEventListener('DOMContentLoaded', function () {
         const form = document.getElementById('comentario-form');
@@ -389,7 +404,7 @@
                                 'Content-Type': 'application/json',
                                 'X-CSRFToken': csrfToken
                             },
-                            body: JSON.stringify(json),
+                            body: JSON.stringify(jsonObject),
                         })
                             .then(response => response.json())
                             .then(data => {
@@ -465,12 +480,13 @@
 </div>
 
 <!-- Historial -->
-<div class="custom-container">
+<div class="container">
     <h1 class="new-h1">Historial</h1>
     <div class="line"></div>
+    <p><i>Dirige el cursor sobre un punto para desplegar la información.</i></p>
     <div class="timeline">
         <div class="timeline-line"></div>
-        {% for step in package_steps %}
+        {% for step in historial_steps %}
         <div class="timeline-item">
             <div
                 class="timeline-point {% if step == current_step %}active{% elif step in previous_steps %}completed{% endif %}">
@@ -479,41 +495,49 @@
         {% endfor %}
     </div>
 
-    <ul class="list-group">
+    <ol class="list-group">
         {% for step in solicitud_historial %}
-        <li class="list-group-item">{{ step.estatus }}</li>
+        <li class="list-group-item"> {{step.fecha_de_creacion}} - {{ step.estatus }}</li>
         {% endfor %}
-    </ul>
+    </ol>
 </div>
 
 <!-- Sección de comentarios -->
-<h1 class="new-h1">Comentarios</h1>
-<div class="line"></div>
-<div class="comentario-section">
-    {% if comentarios.data is null %}
-    <p>{{comentarios.res}}</p>
+<div class="container">
+    <h1 class="new-h1">Comentarios</h1>
+    <div class="line"></div>
+    <div class="comentario-section">
+        {% if comentarios.data is null %}
+        <p><i>{{comentarios.res}}</i></p>
 
-    {% else %}
-    {% for comentario in comentarios.data %}
-    <div class="comentario-box">
-        <div class="comentario-header">
-            <span class="comentario-author">{{ comentario.usuario }}</span>
-            <span class="comentario-date">{{ comentario.fecha_de_creacion }}</span>
+        {% else %}
+        {% for comentario in comentarios.data %}
+        <div class="comentario-box">
+            <div class="comentario-header">
+                <span class="comentario-author">{{ comentario.usuario }}</span>
+                <span class="comentario-date">{{ comentario.fecha_de_creacion }}</span>
+            </div>
+            <div class="comentario-text">{{ comentario.texto }}</div>
+            {% if comentario.removible %}
+            <div class="delete-comentario">
+                <a href="#" class="delete-link" data-comentario-id="{{ comentario.id }}">eliminar</a>
+            </div>
+            {% endif %}
         </div>
-        <div class="comentario-text">{{ comentario.texto }}</div>
-        {% if comentario.removible %}
-        <div class="delete-comentario">
-            <a href="#" class="delete-link" data-comentario-id="{{ comentario.id }}">eliminar</a>
-        </div>
+        {% endfor %}
         {% endif %}
     </div>
-    {% endfor %}
-    {% endif %}
 </div>
 
-<form id="comentario-form">
-    <textarea id="comment-box" class="comentario-input" rows="4" placeholder="Escribe un comentario..."></textarea>
-    <button id="enviar-btn" class="btn btn-enviar">Enviar</button>
-</form>
+<div class="container">
+    <form id="comentario-form">
+        <textarea id="comment-box" class="comentario-input" rows="4" placeholder="Escribe un comentario..."></textarea>
+        <button id="enviar-btn" class="btn btn-enviar">Enviar</button>
+    </form>
+</div>
+
+<div class="container">
+
+</div>
 
 {% endblock %}
