@@ -2,7 +2,10 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('solicitudes-locales/', views.recientesSolicitudesLocalesView, name='solicitudes-locales'),
+    path('explorar/', views.recientesSolicitudesLocalesView, name='solicitudes-locales'),
+    path('<int:solicitud_id>/', views.gestionarSolicitud, name='explorar-solicitud'),
+
+
     path("mis-solicitudes/", views.misSolicitudesView, name="ver-solicitudes"),
     
     path("mis-solicitudes/<int:solicitud_id>/", views.gestionarSolicitud, name="gestionar-solicitudes"),
