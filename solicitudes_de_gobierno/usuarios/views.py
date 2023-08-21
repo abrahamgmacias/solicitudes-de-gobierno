@@ -67,10 +67,14 @@ def actualizarUsuario(request):
 
 
 def getDataUsuario(usuario_id):
-    user_instance = Usuario.objects.filter(id=usuario_id, activo=True)
+    user_instance = Usuario.objects.filter(id=usuario_id, activo=True).select_related('tipo_de_usuario')
 
     if user_instance.exists():
-        return {'data': list(user_instance.values())[0], 'res': 'Se encontró la data del usuario exitosamente.'}
+        user_data = list(user_instance.values())[0]
+        user_data['tipo_de_usuario'] = user_instance[0].tipo_de_usuario.nombre
+
+        return {'data': user_data, 'res': 'Se encontró la data del usuario exitosamente.'}
+
     else: 
         return {'data': None, 'res': 'No se encontró usuario activo con esa ID.'}
 
