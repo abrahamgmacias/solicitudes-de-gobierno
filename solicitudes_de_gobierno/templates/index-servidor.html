@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}Opciones{% endblock %}
+
+{% block content %}
+<style>
+    .box-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 20px;
+        padding: 40px 0;
+        border-radius: 10px;
+        margin-bottom: 100px;
+    }
+
+    .box-opciones {
+        background-color: #f5f5f5;
+        border: 1px solid rgb(126, 126, 126);
+        padding: 20px;
+        align-items: center;
+        box-sizing: border-box;
+        text-align: center;
+        border-radius: 10px;
+        height: 250px;
+        width: 150px;
+    }
+
+    .box-opciones:hover {
+        height: 245px;
+        width: 145px;
+        border: 1px solid black;
+    }
+
+    h2 {
+        margin-bottom: 5px;
+    }
+</style>
+
+<h2>Bienvenido, {{ usuario.nombre }} {{ usuario.apellido }} </h2>
+<div class="line"></div>
+<p><i>Tus herramientas como servidor...</i></p>
+
+<div class="box-container">
+    <a href="{% url 'solicitudes:ver-solicitudes' %}">
+        <div class="box-opciones" name="mis-solicitudes">
+            <strong>Mis solicitudes</strong>
+            <p>Ver todas tus peticiones</p>
+        </div>
+    </a>
+    <a href="{% url 'solicitudes:solicitudes-locales' %}">
+        <div class="box-opciones" name="solicitudes-recientes">
+            <strong>Solicitudes en tu localidad</strong>
+            <p>Ver las últimas peticiones en {{ usuario.municipio_ciudad }}</p>
+        </div>
+    </a>
+    <a href="{% url 'solicitudes:registrar-solicitud' %}">
+        <div class="box-opciones" name="crear-solicitudes">
+            <strong>Registrar solicitud</strong>
+            <p>Levantar un reporte, hacer una sugerencia</p>
+        </div>
+    </a>
+    <a>
+        <div class="box-opciones" name="solicitudes-recientes">
+            <strong>Gestionar solicitudes</strong>
+            <p>Analizar y manejar solicitudes bajo tu mando</p>
+        </div>
+    </a>
+    <a>
+        <div class="box-opciones" name="administrar-usuarios">
+            <strong>Administrar usuarios</strong>
+            <p>Actualizar, crear o eliminar usuarios</p>
+        </div>
+    </a>
+
+</div>
+
+{% endblock %}
