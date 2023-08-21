@@ -372,7 +372,7 @@
     // Event listener para editar los campos de la solicitud
     document.addEventListener('DOMContentLoaded', function () {
         const editableFields = document.querySelectorAll('.editable-field');
-        let activeField = null; // To track the currently active editable field
+        let activeField = null;
         const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
         editableFields.forEach(field => {
@@ -431,7 +431,7 @@
             textDisplay.style.display = 'none';
             editInput.style.display = 'block';
             editInput.value = textDisplay.textContent;
-            editInput.focus(); // Place cursor in the input field
+            editInput.focus();
 
             activeField = field;
         }

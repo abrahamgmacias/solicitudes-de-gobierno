@@ -251,39 +251,6 @@
         });
     });
 
-    // document.addEventListener('DOMContentLoaded', function () {
-    //     const deleteButton = document.getElementById('deleteButton');
-
-    //     deleteButton.addEventListener('click', function () {
-    //         const confirmation = confirm("Estás seguro de que quieres eliminar esta solicitud? Esta acción no es reversible.");
-
-    //         if (confirmation) {
-    //             const urlParts = window.location.pathname.split('/');
-    //             const solicitud_id = urlParts[3];
-
-    //             const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-
-    //             fetch(`${solicitud_id}/eliminar`, {
-    //                 method: 'DELETE',
-    //                 headers: {
-    //                     'X-CSRFToken': csrfToken,
-    //                 }
-    //             })
-    //                 .then(response => response.json())
-    //                 .then(data => {
-    //                     alert("La solicitud fue eliminada exitosamente.");
-    //                     location.reload();
-    //                 })
-    //                 .catch(error => {
-    //                     console.error('Error:', error);
-    //                     alert('Ocurrió un error intentando eliminar la solicitud. Intente más tarde.');
-    //                 });
-    //         } else {
-    //             alert("Petición cancelada.");
-    //         }
-    //     });
-    // });
-
     // Permite agregar comentarios
     document.addEventListener('DOMContentLoaded', function () {
         const form = document.getElementById('comentario-form');
@@ -356,6 +323,18 @@
             </div>
         </div>
         {% endif %}
+        {% endif %}
+        {% if usuario.tipo_de_usuario == 'Servidor' }
+        <div class="rectangular-section">
+            <p class="key">{{ key }}</p>
+            <div class="editable-field" data-key="{{key}}">
+                <div class="text-display">{{ value }}</div>
+                <div class="edit-input-container">
+                    <input type="text" class="edit-input form-control" style="display: none;">
+                </div>
+            </div>
+        </div>
+
         {% endif %}
         {% endfor %}
     </div>
