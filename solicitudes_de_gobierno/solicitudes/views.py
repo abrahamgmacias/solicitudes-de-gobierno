@@ -21,19 +21,18 @@ def misSolicitudesView(request):
 
 
 def solicitudView(request, solicitud_id):
-    if request.method == 'GET':
-        solicitud = getDataSolicitud(solicitud_id)
+    solicitud = getDataSolicitud(solicitud_id)
 
-        if solicitud['data'] != None:
-            solicitud_historial = getHistorialDeSolicitud(solicitud_id)['data']
-            historial_steps = getHistorialSteps()
-            comentarios = getComentarios(solicitud_id, 1)
+    if solicitud['data'] != None:
+        solicitud_historial = getHistorialDeSolicitud(solicitud_id)['data']
+        historial_steps = getHistorialSteps()
+        comentarios = getComentarios(solicitud_id, 1)
 
-            current_step = solicitud_historial[-1]["step"]
-            current_step_index = historial_steps.index(current_step)
-            previous_steps = historial_steps[:current_step_index]
+        current_step = solicitud_historial[-1]["step"]
+        current_step_index = historial_steps.index(current_step)
+        previous_steps = historial_steps[:current_step_index]
 
-            context = {
+        context = {
                 'solicitud_data': solicitud['data'],
                 'solicitud_historial': solicitud_historial,
                 'historial_steps': historial_steps,
@@ -42,14 +41,14 @@ def solicitudView(request, solicitud_id):
                 'comentarios': comentarios,
                 }
 
-            # Fake usuario
-            if solicitud['data']['usuario_id'] != 1:
-                return render(request, 'solicitud-individual-ajena.html', context=context)
+        # Fake usuario
+        if solicitud['data']['usuario_id'] != 1:
+            return render(request, 'solicitud-individual-ajena.html', context=context)
 
-            return render(request, 'solicitud-individual.html', context=context)
+        return render(request, 'solicitud-individual.html', context=context)
         
-        else: 
-            return render(request, 'missing-solicitud-individual.html')
+    else: 
+        return render(request, 'missing-solicitud-individual.html')
 
 
 def gestionarSolicitud(request, solicitud_id=None):
@@ -123,20 +122,26 @@ def registrarSolicitudView(request):
     return render(request, 'registrar-solicitud.html', {'form': form})
 
 
-def recientesSolicitudesLocalesView(request):
+def explorarSolicitudesView(request):
     sample_user_id = 1
     usuario = getDataUsuario(usuario_id=sample_user_id)
+    
+    if usuario['data'] != None:
+        usuario_data = usuario['data']
+        solicitudes = getSolicitudesPorParametros({
+            'municipio_ciudad': usuario_data['municipio_ciudad'],
+            'activo': True
+        })
 
-    solicitudes = getSolicitudesPorParametros({
-        'municipio_ciudad': usuario['data']['municipio_ciudad'],
-        'activo': True
-    })
-
-    if solicitudes['data'] != None:
         for solicitud in solicitudes['data']:
             solicitud['titulo'] = formatTituloSolicitud(solicitud)
 
-    return render(request, 'solicitudes-recientes.html', { 'solicitudes': solicitudes['data'], 'res': solicitudes['res']})
+        context = { 
+            'solicitudes': solicitudes['data'],
+            'res': solicitudes['res']
+            }
+
+        return render(request, 'solicitudes-recientes.html', context=context )
 
 
 
