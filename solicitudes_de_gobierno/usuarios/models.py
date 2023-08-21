@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils import timezone
-import datetime
+from django.contrib.auth.hashers import make_password, check_password 
 
 # Create your models here.
 class TipoDeUsuario(models.Model):
@@ -32,6 +32,7 @@ class Usuario(models.Model):
     contrasena = models.CharField(null=False, default="missing_password")
     activo = models.BooleanField(null=False, default=True)
     fecha_de_creacion = models.DateTimeField(null=False, default=timezone.now)
+    last_login = models.DateTimeField(null=True, default=None)
 
     def __str__(self):
         return self.nombre
@@ -39,3 +40,11 @@ class Usuario(models.Model):
     class Meta:
         verbose_name_plural = "usuarios"
 
+    def save(self, *args, **kwargs):
+        if self.contrasena and not self.contrasena.startswith('pbkdf2_sha256$'):
+            self.contrasena = make_password(self.contrasena)
+        super().save(*args, **kwargs)
+
+    def checarContrasena(self, raw_contrasena):
+        #  Cuando implemente los hashers utiliza check_password(raw_contrasena, self.contrasena)
+        return raw_contrasena == self.contrasena
