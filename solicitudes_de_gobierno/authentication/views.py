@@ -1,21 +1,22 @@
-from django.shortcuts import render
-from django.contrib.auth import authenticate, login
+from django.shortcuts import render, redirect
+from django.contrib.auth import login
+from .auth_backends.custom_auth import CustomAuthenticate
 
-# Create your views here.
+# View que maneja el inicio de sesión
 def loginView(request):
+    # Checa correo y contraseña con un authenticate custom y redirige al dashboard
     if request.method == 'POST':
-        email = request.POST['username']
-        contrasena = request.POST['password']
-        user = authenticate(request, username=email, password=contrasena)
+        correo_electronico = request.POST.get('correo_electronico')
+        contrasena = request.POST.get('contrasena')
+        auth_backend = CustomAuthenticate()
 
-        if user is not None:
-            login(request, user)
-            # return redirect('dashboard')
+        usuario = auth_backend.authenticate(request, correo_electronico=correo_electronico, contrasena=contrasena)
+
+        if usuario is not None:
+            return redirect('landing-page')
 
         else:
-            # Invalid credentials
-            error_message = "Invalid username or password."
-            return render(request, 'login.html', {'error_message': error_message})
+            return render(request, 'login.html', {'res': "El correo o la contraseña son incorrectos."})
 
     if request.method == 'GET':
         return render (request, 'login.html')
