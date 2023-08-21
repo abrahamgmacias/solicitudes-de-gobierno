@@ -38,25 +38,25 @@
 
 <h2>Bienvenido, {{ usuario.nombre }} {{ usuario.apellido }} </h2>
 <div class="line"></div>
-<p><i>Tus herramientas como ciudadano...</i></p>
+<p><i>Tus herramientas como {{ usuario.tipo_de_usuario }}...</i></p>
 
 <div class="box-container">
     <a href="{% url 'solicitudes:ver-solicitudes' %}">
         <div class="box-opciones" name="mis-solicitudes">
-            <strong>Mis solcitudes</strong>
-            <p>Ver todas tus peticiones.</p>
+            <strong>Mis solicitudes</strong>
+            <p>Ver todas tus peticiones</p>
         </div>
     </a>
     <a href="{% url 'solicitudes:solicitudes-locales' %}">
         <div class="box-opciones" name="solicitudes-recientes">
-            <strong>Solicitudes recientes en {{ usuario.municipio_ciudad }}</strong>
-            <p>Ver las últimas peticiones en tu localidad.</p>
+            <strong>Solicitudes en tu localidad</strong>
+            <p>Ver las últimas peticiones en {{ usuario.municipio_ciudad }}</p>
         </div>
     </a>
     <a href="{% url 'solicitudes:registrar-solicitud' %}">
         <div class="box-opciones" name="crear-solicitudes">
             <strong>Registrar solicitud</strong>
-            <p>Levantar un reporte, hacer una sugerencia.</p>
+            <p>Levantar un reporte, hacer una sugerencia</p>
         </div>
     </a>
 </div>
