@@ -32,7 +32,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-AUTHENTICATION_BACKENDS = ['usuarios.custom_auth_backend.CustomAuthenticate']
+AUTHENTICATION_BACKENDS = ['authentication.auth_backends.custom_auth.CustomAuthenticate']
 
 # Application definition
 
