@@ -48,10 +48,10 @@
             <p>Ver todas tus peticiones</p>
         </div>
     </a>
-    <a href="{% url 'solicitudes:solicitudes-locales' %}">
-        <div class="box-opciones" name="solicitudes-recientes">
-            <strong>Solicitudes en tu localidad</strong>
-            <p>Ver las últimas peticiones en {{ usuario.municipio_ciudad }}</p>
+    <a href="{% url 'solicitudes:explorar-solicitudes' %}">
+        <div class="box-opciones" name="explorar-solicitudes">
+            <strong>Gestionar solicitudes</strong>
+            <p>Analizar y manejar solicitudes bajo tu mando en {{ usuario.municipio_ciudad }}, {{usuario.estado}}</p>
         </div>
     </a>
     <a href="{% url 'solicitudes:registrar-solicitud' %}">
@@ -60,12 +60,7 @@
             <p>Levantar un reporte, hacer una sugerencia</p>
         </div>
     </a>
-    <a>
-        <div class="box-opciones" name="solicitudes-recientes">
-            <strong>Gestionar solicitudes</strong>
-            <p>Analizar y manejar solicitudes bajo tu mando</p>
-        </div>
-    </a>
+
     <a>
         <div class="box-opciones" name="administrar-usuarios">
             <strong>Administrar usuarios</strong>
