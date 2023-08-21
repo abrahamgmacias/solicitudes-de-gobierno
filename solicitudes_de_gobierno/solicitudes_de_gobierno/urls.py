@@ -22,5 +22,6 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("", views.index, name="landing-page"),
     path("usuarios/", include("usuarios.urls")),
+    path("auth/", include(("authentication.urls", "authentication"), namespace="authentication")),
     path("solicitudes/", include(("solicitudes.urls", "solicitudes"), namespace="solicitudes")),
 ]
