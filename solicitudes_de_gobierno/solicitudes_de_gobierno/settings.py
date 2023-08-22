@@ -142,3 +142,13 @@ SESSION_EXPIRE_SECONDS = 5 * 60
 SESSION_SAVE_EVERY_REQUEST = True
 
 LOGIN_URL = "/auth/login"
+
+SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+SESSION_COOKIE_SECURE = True
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'super-special-cache', # Replace with a unique name
+    }
+}
