@@ -1,11 +1,12 @@
 import json
-from django.http import HttpResponse
-from django.shortcuts import render, redirect
-from usuarios.views import validarExistenciaUsuario, getDataUsuario
+from django.shortcuts import render
 
+# Landing page view
 def index(request):
     context = {}
-    if request.user is not None:
+
+    # Revisa si el usuario está logged in y muestra el tablero correspondiente para su tipo
+    try: 
         usuario = json.loads(request.session['usuario_data'])
 
         if usuario['tipo_de_usuario'] == 1:
@@ -13,5 +14,7 @@ def index(request):
         
         if usuario['tipo_de_usuario'] == 2: 
             return render(request, 'index-servidor.html', {'usuario': usuario })
-
-    return render(request, 'index.html', context=context)
+        
+    # Tablero genérico
+    except:
+        return render(request, 'index.html', context=context)
