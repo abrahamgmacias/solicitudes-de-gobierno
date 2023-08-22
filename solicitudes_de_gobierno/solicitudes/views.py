@@ -7,7 +7,9 @@ from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from usuarios.views import validarExistenciaUsuario, getDataUsuario
 from .models import Solicitud, HistorialDeSolicitud, Comentario
+from django.contrib.auth.decorators import login_required
 
+@login_required
 def misSolicitudesView(request):
     # Query user solicitudes
     sample_user_id = 1
@@ -69,6 +71,7 @@ def gestionarSolicitud(request, solicitud_id=None):
     return response
 
 
+@login_required
 def actualizarSolicitud(data, solicitud_id):
     solicitud = validarExistenciaSolicitud(solicitud_id)
 
@@ -91,6 +94,7 @@ def actualizarSolicitud(data, solicitud_id):
         return JsonResponse(status=400, data={'res': solicitud['res']})
 
 
+@login_required
 def eliminarSolicitudView(solicitud_id):
     solicitud = validarExistenciaSolicitud(solicitud_id)
 
@@ -105,6 +109,7 @@ def eliminarSolicitudView(solicitud_id):
         return JsonResponse(status=404, data={"res": solicitud['data']})
 
 
+@login_required
 def registrarSolicitudView(request):
     if request.method == 'POST':
         form = SolicitudForm(request.POST)
