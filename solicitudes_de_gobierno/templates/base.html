@@ -119,6 +119,59 @@
 </head>
 
 <body>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            if ('geolocation' in navigator) {
+                navigator.geolocation.getCurrentPosition(position => {
+                    const latitude = position.coords.latitude;
+                    const longitude = position.coords.longitude;
+
+                    // Fetch the user ID from your authentication system or session
+                    const userId = 123; // Replace with the actual user ID
+
+                    // Reverse geocode to get state and city using Nominatim
+                    const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`;
+
+                    fetch(url)
+                        .then(response => response.json())
+                        .then(data => {
+                            const address = data.address;
+                            const city = address.city || address.town || address.village || '';
+                            const state = address.state || '';
+
+                            const cityElement = document.getElementById('city');
+                            const stateElement = document.getElementById('state');
+
+                            cityElement.textContent = city;
+                            stateElement.textContent = state;
+                            const csrfToken = '{{csrf_token}}';
+
+                            // Envía estado y ciudad a Django en el backend para cache
+                            fetch('/solicitudes/cache-localizacion', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRFToken': csrfToken
+                                },
+                                body: JSON.stringify({ state, city, userId })
+                            })
+                                .then(response => response.json())
+                                .then(data => {
+                                })
+                                .catch(error => {
+                                    console.error('Error:', error);
+                                });
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                        });
+                });
+            } else {
+                console.error('Geolocation is not supported');
+            }
+        });
+    </script>
+
     <header>
         <a href="{% url 'landing-page' %}">
             <h1>Gobierno de Mexico</h1>
