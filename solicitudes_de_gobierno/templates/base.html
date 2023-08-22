@@ -120,30 +120,29 @@
 
 <body>
     <script>
+        // Llama el API de geolocalización cada que se llama la landing page
         document.addEventListener('DOMContentLoaded', function () {
             if ('geolocation' in navigator) {
                 navigator.geolocation.getCurrentPosition(position => {
-                    const latitude = position.coords.latitude;
-                    const longitude = position.coords.longitude;
+                    const latitud = position.coords.latitude;
+                    const longitud = position.coords.longitude;
 
-                    // Fetch the user ID from your authentication system or session
-                    const userId = 123; // Replace with the actual user ID
-
-                    // Reverse geocode to get state and city using Nominatim
-                    const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`;
+                    // Usa nominatim para encontrar ciudad y estado
+                    const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitud}&lon=${longitud}`;
 
                     fetch(url)
                         .then(response => response.json())
                         .then(data => {
-                            const address = data.address;
-                            const city = address.city || address.town || address.village || '';
-                            const state = address.state || '';
+                            const direccion = data.address;
+                            const ciudad = direccion.city || direccion.town || direccion.village || '';
+                            const estado = direccion.state || '';
 
-                            const cityElement = document.getElementById('city');
-                            const stateElement = document.getElementById('state');
+                            const ciudadElement = document.getElementById('ciudad');
+                            const estadoElement = document.getElementById('estado');
 
-                            cityElement.textContent = city;
-                            stateElement.textContent = state;
+                            // Agrega contexto al bloque de texto
+                            ciudadElement.textContent = ciudad;
+                            estadoElement.textContent = estado;
                             const csrfToken = '{{csrf_token}}';
 
                             // Envía estado y ciudad a Django en el backend para cache
@@ -153,7 +152,7 @@
                                     'Content-Type': 'application/json',
                                     'X-CSRFToken': csrfToken
                                 },
-                                body: JSON.stringify({ state, city, userId })
+                                body: JSON.stringify({ estado, ciudad })
                             })
                                 .then(response => response.json())
                                 .then(data => {
@@ -167,7 +166,7 @@
                         });
                 });
             } else {
-                console.error('Geolocation is not supported');
+                console.error('La geolocalizació no está disponible en este momento.');
             }
         });
     </script>

@@ -153,7 +153,7 @@ def explorarSolicitudesView(request):
 
     if locacion_cache != None:
         solicitudes = getSolicitudesPorParametros({
-            'municipio_ciudad': locacion_cache['city']
+            'municipio_ciudad': locacion_cache['ciudad']
         })
 
         for solicitud in solicitudes['data']:
@@ -167,27 +167,24 @@ def explorarSolicitudesView(request):
         return render(request, 'solicitudes-recientes.html', context=context )
 
 
+# Utilizada para guardar la localización en el cache
 def cacheLocalizacion(request):
     if request.method == 'POST':
         data = json.loads(request.body.decode())
 
         # Check if the location data is in the cache based on user ID
         cache_key = f'location:{date.today()}'
-        cached_location = cache.get(cache_key)
 
-        if cached_location is not None:
-            return JsonResponse({'location': cached_location})
+        # Guarda la localización en el cache
+        info_localizacion = {'estado': data['estado'], 'ciudad': data['ciudad']}
 
-        # Perform actions based on location data
-        # Example: Save state and city to cache
+        # Lo guarda en el cache por una hora
+        cache.set(cache_key, info_localizacion, timeout=3600)  
 
-        # Save location data to cache
-        location_info = {'state': data['state'], 'city': data['city']}
-        cache.set(cache_key, location_info, timeout=3600)  # Cache for 1 hour
+        return JsonResponse({'location': info_localizacion})
 
-        return JsonResponse({'location': location_info})
     else:
-        return JsonResponse({'error': 'Invalid request method'}, status=400)
+        return JsonResponse({'error': 'Solicitud invalida.'}, status=400)
 
 
 # Add sort
