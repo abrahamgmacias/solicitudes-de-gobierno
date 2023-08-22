@@ -39,10 +39,12 @@
 {% if usuario %}
 <h2>Bienvenido, {{ usuario.nombre }} {{ usuario.apellido }} </h2>
 <div class="line"></div>
+<p><i>Tus herramientas como ciudadano...</i></p>
 {% else %}
 <h2>Bienvenido</h2>
+<div class="line"></div>
+<p><i>Tus herramientas como ciudadano... Inicia sesión para acceder a más.</i></p>
 {% endif %}
-<p><i>Tus herramientas como ciudadano...</i></p>
 
 <div class="box-container">
     <a href="{% url 'solicitudes:ver-solicitudes' %}">
@@ -54,7 +56,11 @@
     <a href="{% url 'solicitudes:explorar-solicitudes' %}">
         <div class="box-opciones" name="explorar-solicitudes">
             <strong>Solicitudes en tu localidad</strong>
-            <p>Ver las últimas peticiones en {{ usuario.municipio_ciudad }}</p>
+            {% if cache_locacion %}
+            <p>Ver las últimas peticiones en {{ cache_locacion.city }}, {{ cache_locacion.state }}</p>
+            {% else %}
+            <p>Ver las últimas peticiones en <span id="city"></span>, <span id="state"></span></p>
+            {% endif %}
         </div>
     </a>
     <a href="{% url 'solicitudes:registrar-solicitud' %}">
