@@ -1,16 +1,24 @@
 import json
 import traceback
+from datetime import date
+from .forms import SolicitudForm
+from django.core.cache import cache
 from usuarios.models import Usuario
 from django.shortcuts import render, redirect
-from .forms import SolicitudForm
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from usuarios.views import validarExistenciaUsuario, getDataUsuario
+from authentication.views import checkUsuarioLoggedIn
 from .models import Solicitud, HistorialDeSolicitud, Comentario
-from django.contrib.auth.decorators import login_required
 
-@login_required
+
+# View para revisar mis solicitudes como usuario
 def misSolicitudesView(request):
+    # Workaround para @login_required
+    usuario = checkUsuarioLoggedIn(request)
+    if usuario == None:
+        return redirect('authentication:login')
+
     # Query user solicitudes
     sample_user_id = 1
     solicitudes = getSolicitudesDeUsuario(sample_user_id)
@@ -22,7 +30,8 @@ def misSolicitudesView(request):
     return render(request, 'solicitudes.html', {'res': solicitudes['res'], 'solicitudes': solicitudes['data']})
 
 
-def solicitudView(request, solicitud_id):
+# View para visualizar la información de una solicitud
+def solicitudView(request, solicitud_id, usuario):
     solicitud = getDataSolicitud(solicitud_id)
 
     if solicitud['data'] != None:
@@ -43,24 +52,31 @@ def solicitudView(request, solicitud_id):
                 'comentarios': comentarios,
                 }
 
-        # Fake usuario
-        if solicitud['data']['usuario_id'] != 1:
+        # Revisa que el usuario creador sea el mismo que el visualizador para activar template de edición
+        if solicitud['data']['usuario_id'] != usuario['id']:
             return render(request, 'solicitud-individual-ajena.html', context=context)
 
         return render(request, 'solicitud-individual.html', context=context)
         
+    # Si la solicitud no existe
     else: 
         return render(request, 'missing-solicitud-individual.html')
 
 
+# View intermedia para ver, borrar o actualizar una soicitud individual
 def gestionarSolicitud(request, solicitud_id=None):
+    # Workaround para @login_required
+    usuario = checkUsuarioLoggedIn(request)
+    if usuario == None:
+        return redirect('authentication:login')
+
     try:
         data = json.loads(request.body.decode())
     except:
         pass
 
     if request.method == 'GET':
-        response = solicitudView(request, solicitud_id)
+        response = solicitudView(request, solicitud_id, usuario)
 
     if request.method == 'DELETE':
         response = eliminarSolicitudView(solicitud_id)
@@ -71,7 +87,7 @@ def gestionarSolicitud(request, solicitud_id=None):
     return response
 
 
-@login_required
+
 def actualizarSolicitud(data, solicitud_id):
     solicitud = validarExistenciaSolicitud(solicitud_id)
 
@@ -94,7 +110,7 @@ def actualizarSolicitud(data, solicitud_id):
         return JsonResponse(status=400, data={'res': solicitud['res']})
 
 
-@login_required
+
 def eliminarSolicitudView(solicitud_id):
     solicitud = validarExistenciaSolicitud(solicitud_id)
 
@@ -109,8 +125,13 @@ def eliminarSolicitudView(solicitud_id):
         return JsonResponse(status=404, data={"res": solicitud['data']})
 
 
-@login_required
+# View para registar solicitudes
 def registrarSolicitudView(request):
+    # Workaround para @login_required
+    usuario = checkUsuarioLoggedIn(request)
+    if usuario == None:
+        return redirect('authentication:login')
+
     if request.method == 'POST':
         form = SolicitudForm(request.POST)
         form.usuario = 1
@@ -128,14 +149,11 @@ def registrarSolicitudView(request):
 
 
 def explorarSolicitudesView(request):
-    sample_user_id = 1
-    usuario = getDataUsuario(usuario_id=sample_user_id)
-    
-    if usuario['data'] != None:
-        usuario_data = usuario['data']
+    locacion_cache = cache.get(f'location:{date.today()}')
+
+    if locacion_cache != None:
         solicitudes = getSolicitudesPorParametros({
-            'municipio_ciudad': usuario_data['municipio_ciudad'],
-            'activo': True
+            'municipio_ciudad': locacion_cache['city']
         })
 
         for solicitud in solicitudes['data']:
@@ -148,6 +166,28 @@ def explorarSolicitudesView(request):
 
         return render(request, 'solicitudes-recientes.html', context=context )
 
+
+def cacheLocalizacion(request):
+    if request.method == 'POST':
+        data = json.loads(request.body.decode())
+
+        # Check if the location data is in the cache based on user ID
+        cache_key = f'location:{date.today()}'
+        cached_location = cache.get(cache_key)
+
+        if cached_location is not None:
+            return JsonResponse({'location': cached_location})
+
+        # Perform actions based on location data
+        # Example: Save state and city to cache
+
+        # Save location data to cache
+        location_info = {'state': data['state'], 'city': data['city']}
+        cache.set(cache_key, location_info, timeout=3600)  # Cache for 1 hour
+
+        return JsonResponse({'location': location_info})
+    else:
+        return JsonResponse({'error': 'Invalid request method'}, status=400)
 
 
 # Add sort
