@@ -1,16 +1,17 @@
-from django.shortcuts import render, redirect
+import json
 from django.http import HttpResponse
+from django.shortcuts import render, redirect
 from usuarios.views import validarExistenciaUsuario, getDataUsuario
 
 def index(request):
-    sample_ciudadano = 1
-    sample_servidor = 2
+    context = {}
+    if request.user is not None:
+        usuario = json.loads(request.session['usuario_data'])
 
-    usuario_instance = getDataUsuario(sample_servidor)
-    usuario_data = usuario_instance['data']
+        if usuario['tipo_de_usuario'] == 1:
+            context['usuario'] = usuario
+        
+        if usuario['tipo_de_usuario'] == 2: 
+            return render(request, 'index-servidor.html', {'usuario': usuario })
 
-    if usuario_data['tipo_de_usuario'] == "Ciudadano":
-        return render(request, 'index.html', {'usuario': usuario_data})
-    
-    else: 
-        return render(request, 'index-servidor.html', {'usuario': usuario_data})
+    return render(request, 'index.html', context=context)
