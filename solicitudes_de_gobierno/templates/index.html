@@ -36,9 +36,13 @@
     }
 </style>
 
+{% if usuario %}
 <h2>Bienvenido, {{ usuario.nombre }} {{ usuario.apellido }} </h2>
 <div class="line"></div>
-<p><i>Tus herramientas como {{ usuario.tipo_de_usuario }}...</i></p>
+{% else %}
+<h2>Bienvenido</h2>
+{% endif %}
+<p><i>Tus herramientas como ciudadano...</i></p>
 
 <div class="box-container">
     <a href="{% url 'solicitudes:ver-solicitudes' %}">
