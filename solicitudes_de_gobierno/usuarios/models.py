@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from datetime import timedelta
 from django.contrib.auth.hashers import make_password, check_password 
 
 # Create your models here.
@@ -48,6 +49,3 @@ class Usuario(models.Model):
     def checarContrasena(self, raw_contrasena):
         #  Cuando implemente los hashers utiliza check_password(raw_contrasena, self.contrasena)
         return raw_contrasena == self.contrasena
-
-    def is_authenticated(self):
-        return True if self.id else False
