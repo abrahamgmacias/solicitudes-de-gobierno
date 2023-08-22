@@ -48,3 +48,6 @@ class Usuario(models.Model):
     def checarContrasena(self, raw_contrasena):
         #  Cuando implemente los hashers utiliza check_password(raw_contrasena, self.contrasena)
         return raw_contrasena == self.contrasena
+
+    def is_authenticated(self):
+        return True if self.id else False
