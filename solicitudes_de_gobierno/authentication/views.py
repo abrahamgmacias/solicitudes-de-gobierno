@@ -37,3 +37,13 @@ def loginView(request):
 def logoutView(request):
     logout(request)
     return redirect('landing-page') 
+
+# login decorator replacement
+def checkUsuarioLoggedIn(request):
+    try: 
+        usuario = json.loads(request.session['usuario_data'])
+        print(usuario)
+        return usuario
+
+    except:
+        return None
