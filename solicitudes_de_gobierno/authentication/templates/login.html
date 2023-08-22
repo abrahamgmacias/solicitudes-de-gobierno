@@ -70,6 +70,11 @@
         margin-top: 20px;
         margin-bottom: 0px;
     }
+
+    .error {
+        color: rgb(102, 0, 0);
+        font-weight: bold;
+    }
 </style>
 
 <div class="new-container">
@@ -81,9 +86,14 @@
                 <label for="correo_electronico">Email:</label>
                 <input type="correo_electronico" id="correo_electronico" name="correo_electronico" required>
                 <label for="contrasena">Contraseña:</label>
-                <input type="contrasena" id="contrasena" name="contrasena" required>
+                <input type="password" id="contrasena" name="contrasena" required>
                 <button type="submit" class="login-button">Inicia sesión</button>
             </form>
+            {% if res %}
+            <div class="error-message">
+                <p class="error">{{ res }}</p>
+            </div>
+            {% endif %}
             <p class="forgot-password"><a href="#">Olvidé mi contraseña</a></p>
         </div>
     </div>
