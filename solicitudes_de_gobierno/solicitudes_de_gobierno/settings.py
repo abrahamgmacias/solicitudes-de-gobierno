@@ -52,9 +52,9 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
-    "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
@@ -140,3 +140,5 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # # Session timeout
 SESSION_EXPIRE_SECONDS = 5 * 60
 SESSION_SAVE_EVERY_REQUEST = True
+
+LOGIN_URL = "/auth/login"
