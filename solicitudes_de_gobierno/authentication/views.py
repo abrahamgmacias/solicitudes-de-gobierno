@@ -1,3 +1,4 @@
+import json
 from django.shortcuts import render, redirect
 from django.contrib.auth import login
 from .auth_backends.custom_auth import CustomAuthenticate
@@ -13,6 +14,17 @@ def loginView(request):
         usuario = auth_backend.authenticate(request, correo_electronico=correo_electronico, contrasena=contrasena)
 
         if usuario is not None:
+            login(request, usuario)
+
+            usuario_data = {
+                'correo_electronico': usuario.correo_electronico,
+                'id': usuario.id,
+                'nombre': usuario.nombre,
+                'apellido': usuario.apellido,
+                'tipo_de_usuario': usuario.tipo_de_usuario.id
+            }
+            request.session['usuario_data'] = json.dumps(usuario_data)
+
             return redirect('landing-page')
 
         else:
