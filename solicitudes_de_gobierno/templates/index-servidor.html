@@ -51,7 +51,12 @@
     <a href="{% url 'solicitudes:explorar-solicitudes' %}">
         <div class="box-opciones" name="explorar-solicitudes">
             <strong>Gestionar solicitudes</strong>
-            <p>Analizar y manejar solicitudes bajo tu mando en {{ usuario.municipio_ciudad }}, {{usuario.estado}}</p>
+            {% if cache_locacion %}
+            <p>Analizar y manejar solicitudes bajo tu mando en {{ cache_locacion.ciudad }}, {{ cache_locacion.estado }}
+            </p>
+            {% else %}
+            <p>Analizar y manejar solicitudes bajo tu mando en <span id="ciudad"></span>, <span id="estado"></p>
+            {% endif %}
         </div>
     </a>
     <a href="{% url 'solicitudes:registrar-solicitud' %}">

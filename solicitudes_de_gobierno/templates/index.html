@@ -57,9 +57,9 @@
         <div class="box-opciones" name="explorar-solicitudes">
             <strong>Solicitudes en tu localidad</strong>
             {% if cache_locacion %}
-            <p>Ver las últimas peticiones en {{ cache_locacion.city }}, {{ cache_locacion.state }}</p>
+            <p>Ver las últimas peticiones en {{ cache_locacion.ciudad }}, {{ cache_locacion.estado }}</p>
             {% else %}
-            <p>Ver las últimas peticiones en <span id="city"></span>, <span id="state"></span></p>
+            <p>Ver las últimas peticiones en <span id="ciudad"></span>, <span id="estado"></span></p>
             {% endif %}
         </div>
     </a>
