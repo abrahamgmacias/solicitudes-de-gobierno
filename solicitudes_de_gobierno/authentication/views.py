@@ -1,6 +1,6 @@
 import json
 from django.shortcuts import render, redirect
-from django.contrib.auth import login
+from django.contrib.auth import login, logout
 from .auth_backends.custom_auth import CustomAuthenticate
 
 # View que maneja el inicio de sesión
@@ -33,3 +33,7 @@ def loginView(request):
     if request.method == 'GET':
         return render (request, 'login.html')
 
+
+def logoutView(request):
+    logout(request)
+    return redirect('landing-page') 
