@@ -31,9 +31,10 @@ def misSolicitudesView(request):
 
 
 # View para visualizar la información de una solicitud
-def solicitudView(request, solicitud_id, usuario):
+def solicitudView(request, solicitud_id, usuario=None):
     solicitud = getDataSolicitud(solicitud_id)
 
+    # Recopilar datos de la solicitud si existe
     if solicitud['data'] != None:
         solicitud_historial = getHistorialDeSolicitud(solicitud_id)['data']
         historial_steps = getHistorialSteps()
@@ -44,31 +45,40 @@ def solicitudView(request, solicitud_id, usuario):
         previous_steps = historial_steps[:current_step_index]
 
         context = {
-                'solicitud_data': solicitud['data'],
-                'solicitud_historial': solicitud_historial,
-                'historial_steps': historial_steps,
-                'current_step': current_step,
-                'previous_steps': previous_steps,
-                'comentarios': comentarios,
-                }
+            'solicitud_data': solicitud['data'],
+            'solicitud_historial': solicitud_historial,
+            'historial_steps': historial_steps,
+            'current_step': current_step,
+            'previous_steps': previous_steps,
+            'comentarios': comentarios,
+            }
 
+    # No existe 
+    else: 
+        return render(request, 'missing-solicitud-individual.html')
+
+    # Checar si el usuario inició sesión
+    if usuario is not None:
         # Revisa que el usuario creador sea el mismo que el visualizador para activar template de edición
         if solicitud['data']['usuario_id'] != usuario['id']:
             return render(request, 'solicitud-individual-ajena.html', context=context)
 
         return render(request, 'solicitud-individual.html', context=context)
-        
-    # Si la solicitud no existe
-    else: 
-        return render(request, 'missing-solicitud-individual.html')
 
+    # Cuando no ha iniciado sesión
+    else: 
+        return render(request, 'solicitud-individual-ajena.html', context=context)
+    
 
 # View intermedia para ver, borrar o actualizar una soicitud individual
 def gestionarSolicitud(request, solicitud_id=None):
+    login_required = request.GET.get('login_required') == 'True'
+    
     # Workaround para @login_required
-    usuario = checkUsuarioLoggedIn(request)
-    if usuario == None:
-        return redirect('authentication:login')
+    if login_required:
+        usuario = checkUsuarioLoggedIn(request)
+        if usuario == None:
+            return redirect('authentication:login')
 
     try:
         data = json.loads(request.body.decode())
@@ -76,7 +86,11 @@ def gestionarSolicitud(request, solicitud_id=None):
         pass
 
     if request.method == 'GET':
-        response = solicitudView(request, solicitud_id, usuario)
+        if login_required == True:
+            response = solicitudView(request, solicitud_id, usuario)
+
+        else: 
+            response = solicitudView(request, solicitud_id)
 
     if request.method == 'DELETE':
         response = eliminarSolicitudView(solicitud_id)
@@ -87,7 +101,7 @@ def gestionarSolicitud(request, solicitud_id=None):
     return response
 
 
-
+# Actualiza una solicitud de manera dinámica
 def actualizarSolicitud(data, solicitud_id):
     solicitud = validarExistenciaSolicitud(solicitud_id)
 
@@ -96,6 +110,7 @@ def actualizarSolicitud(data, solicitud_id):
 
         for key, value in data.items():
             if key not in ['activo']:
+                # Si se modifica el estatus, se debe registar un paso más en el historial
                 if key == "estatus_id":
                     registrarHistorialDeSolicitud(solicitud_id, value)
                 else: 
@@ -108,7 +123,6 @@ def actualizarSolicitud(data, solicitud_id):
 
     else:
         return JsonResponse(status=400, data={'res': solicitud['res']})
-
 
 
 def eliminarSolicitudView(solicitud_id):
@@ -148,16 +162,20 @@ def registrarSolicitudView(request):
     return render(request, 'registrar-solicitud.html', {'form': form})
 
 
+# View para visualizar las últimas solicitudes en tu zona
 def explorarSolicitudesView(request):
+    # Agarra cache de la localización
     locacion_cache = cache.get(f'location:{date.today()}')
 
     if locacion_cache != None:
         solicitudes = getSolicitudesPorParametros({
-            'municipio_ciudad': locacion_cache['ciudad']
+            'municipio_ciudad': locacion_cache['ciudad'],
+            'activo': True
         })
 
-        for solicitud in solicitudes['data']:
-            solicitud['titulo'] = formatTituloSolicitud(solicitud)
+        if solicitudes['data'] != None:
+            for solicitud in solicitudes['data']:
+                solicitud['titulo'] = formatTituloSolicitud(solicitud)
 
         context = { 
             'solicitudes': solicitudes['data'],
@@ -213,6 +231,7 @@ def getSolicitudesDeUsuario(usuario_id):
        return {'res': usuario['res']}
 
 
+# Consulta las solicitudes de manera dinámica
 def getSolicitudesPorParametros(condiciones_de_filtro):
     solicitudes = Solicitud.objects.select_related('accion', 'espacio', 'prioridad').filter(**condiciones_de_filtro)
 
@@ -232,14 +251,12 @@ def getSolicitudesPorParametros(condiciones_de_filtro):
         return { 'res': 'Actualmente no hay solicitudes activas cerca de ti.', 'data': None}
 
 
+# Da formato legible a una solicitud
 def formatTituloSolicitud(solicitud_data):
     return f"ID: {solicitud_data['id']} - {solicitud_data['accion']} {solicitud_data['espacio']} - {solicitud_data['municipio_ciudad']}, {solicitud_data['estado']} - {solicitud_data['fecha_de_creacion']}"
 
 
-def createNombreTicket(solicitud_data):
-    pass
-
-
+# Busca la solicitud en base a su ID y regresa el la solicitud
 def validarExistenciaSolicitud(solicitud_id):
     solicitud_instance = Solicitud.objects.filter(id=solicitud_id, activo=True)
 
@@ -249,6 +266,7 @@ def validarExistenciaSolicitud(solicitud_id):
         return {'solicitud': None, 'exists': False, 'res': "No existe solicitud activa con esa ID."}
 
 
+# Agrega un nuevo paso en el historial para una solicitud
 def registrarHistorialDeSolicitud(solicitud_id, estatus_id):
     historial_instance = HistorialDeSolicitud.objects.filter(estatus_id=estatus_id, solicitud_id=solicitud_id, activo=True)
 
@@ -264,6 +282,7 @@ def registrarHistorialDeSolicitud(solicitud_id, estatus_id):
     return JsonResponse(status=200, data={'res': 'Se actualizó el historial con éxito.'})
 
 
+# Hardcoded lista de pasos de historial
 def getHistorialSteps():
     return [
         "Registro",
@@ -298,6 +317,7 @@ def registrarSolicitud(data):
     return JsonResponse(status=200, data={"res": "Se registró la solicitud correctamente."})
 
 
+# Recopila el historial de solicitud
 def getHistorialDeSolicitud(solicitud_id):
     historial_de_solicitudes = HistorialDeSolicitud.objects.select_related('estatus').filter(solicitud_id=solicitud_id, activo=True)
     historial_data = list(
@@ -306,6 +326,7 @@ def getHistorialDeSolicitud(solicitud_id):
             )
     )
 
+    # Actualiza el paso actual del historial de solicitud para el usuario
     for hist, hist_data in zip(historial_de_solicitudes, historial_data):
         estatus = hist_data['estatus']
         if estatus == 1:
@@ -326,6 +347,7 @@ def getHistorialDeSolicitud(solicitud_id):
     return {"data": historial_data, 'res': 'Se obtuvo el historial con éxito.'}
 
 
+# Recopila todos los datos de la solicitud existente
 def getDataSolicitud(solicitud_id):
     solicitud = validarExistenciaSolicitud(solicitud_id)
 
@@ -335,10 +357,12 @@ def getDataSolicitud(solicitud_id):
             'id', 'informacion_adicional', 'direccion', 'estado', 'municipio_ciudad', 'codigo_postal', 'accion', 'espacio', 'prioridad', 'fecha_de_creacion', 'usuario_id'
         ))[0]
 
+        # Formatea titulos para más fácil lectura
         titulos = {
             'id', 'Información adicional', 'Dirección', 'Estado', 'Municipio o ciudad', 'Código postal', 'Fecha de creación', "Accion", "Espacio", "Prioridad",
         }
 
+        # Actualizar el JSON de solicitud
         solicitud_data["accion"] = solicitud_instance[0].accion.nombre
         solicitud_data["espacio"] = solicitud_instance[0].espacio.nombre
         solicitud_data["prioridad"] = solicitud_instance[0].prioridad.nombre
@@ -349,7 +373,7 @@ def getDataSolicitud(solicitud_id):
         return {'data': None, 'res': 'No se encontró una solicitud con esa ID.', 'formatted_data': None}
 
 
-
+# Consulta todos los comentarios de una solicitud
 def getComentarios(solicitud_id, usuario_id):
     comentarios_instance = Comentario.objects.select_related('usuario').filter(activo=True, solicitud_id=solicitud_id)
 
@@ -374,6 +398,7 @@ def getComentarios(solicitud_id, usuario_id):
         return {'data': None, 'res': 'Actualmente no hay comentarios. Sé el primero en escribir uno...'}
 
 
+# Valida la existencia del comentario
 def validarExistenciaComentario(comentario_id):
     comentario_instance = Comentario.objects.filter(id=comentario_id, activo=True)
 
@@ -383,6 +408,7 @@ def validarExistenciaComentario(comentario_id):
         return {'comentario': None, 'exists': False, 'res': "No existe solicitud activa con esa ID."}
 
 
+# Agrega un comentario a una solicitud
 def agregarComentario(data, solicitud_id):
     solicitud_instance = validarExistenciaSolicitud(solicitud_id)
 
@@ -401,6 +427,7 @@ def agregarComentario(data, solicitud_id):
         return JsonResponse(status=400, data={'res': 'No se encontró una solicitud activa con esa ID.'}) 
 
 
+# Elimina el comentario de una solicitud tras validar su existencia
 def eliminarComentario(comentario_id):
     comentario = validarExistenciaComentario(comentario_id)
 
@@ -418,6 +445,7 @@ def eliminarComentario(comentario_id):
     return JsonResponse(data={'res': comentario["res"]}, status=400)
 
 
+# Actualiza el comentario de una solicitud tras validar su existencia
 def actualizarComentario(data, comentario_id):
     comentario = validarExistenciaComentario(comentario_id)
 
@@ -435,6 +463,7 @@ def actualizarComentario(data, comentario_id):
     return JsonResponse(data={'res': comentario["res"]}, status=400)
 
 
+# Función intermediaria para borrar y publicar un comentario en una solicitud
 def gestionarComentarios(request, solicitud_id=None, comentario_id=None):
     try:
         data = json.loads(request.body.decode())
