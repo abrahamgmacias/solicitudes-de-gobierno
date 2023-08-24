@@ -222,6 +222,14 @@
         display: inline-block;
         width: 20px;
     }
+
+    .i-accentuated {
+        font-weight: bold;
+    }
+
+    .container {
+        margin-bottom: 20px;
+    }
 </style>
 
 {% bootstrap_javascript %}
@@ -324,18 +332,6 @@
         </div>
         {% endif %}
         {% endif %}
-        {% if usuario.tipo_de_usuario == 'Servidor' }
-        <div class="rectangular-section">
-            <p class="key">{{ key }}</p>
-            <div class="editable-field" data-key="{{key}}">
-                <div class="text-display">{{ value }}</div>
-                <div class="edit-input-container">
-                    <input type="text" class="edit-input form-control" style="display: none;">
-                </div>
-            </div>
-        </div>
-
-        {% endif %}
         {% endfor %}
     </div>
 </div>
@@ -390,11 +386,23 @@
     </div>
 </div>
 
+{% if usuario.activo %}
 <div class="container">
     <form id="comentario-form">
         <textarea id="comment-box" class="comentario-input" rows="4" placeholder="Escribe un comentario..."></textarea>
         <button id="enviar-btn" class="btn btn-enviar">Enviar</button>
     </form>
 </div>
+
+{% else %}
+<div class="container">
+    <div class="comentario-section">
+        <div class="comentario-box">
+            <p><i class="i-accentuated">Inicia sesión para agregar un comentario.</i></p>
+        </div>
+    </div>
+</div>
+
+{% endif %}
 
 {% endblock %}
