@@ -28,6 +28,10 @@
             font-family: 'Montserrat', sans-serif;
         }
 
+        h3 {
+            font-family: 'Montserrat', sans-serif;
+        }
+
         .buttons {
             display: flex;
             gap: 10px;
@@ -37,8 +41,29 @@
             background-color: #0b231e;
             color: #fff;
             padding: 20px;
-            text-align: center;
+            text-align: right;
             flex-shrink: 0;
+            margin-top: 50px;
+        }
+
+        .footer-columns {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .footer-column {
+            width: 50%;
+            padding: 10px;
+        }
+
+        .footer-column h3 {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .footer-column p {
+            font-size: 14px;
+            color: white;
         }
 
         .styled-button {
@@ -106,6 +131,10 @@
             font-family: 'Montserrat', sans-serif;
         }
 
+        .p-footer {
+            color: white;
+        }
+
         i {
             font-family: 'Montserrrat', sans-serif;
         }
@@ -166,7 +195,7 @@
                         });
                 });
             } else {
-                console.error('La geolocalizació no está disponible en este momento.');
+                console.error('La geolocalización no está disponible en este momento.');
             }
         });
     </script>
@@ -191,7 +220,16 @@
     </div>
 
     <footer>
-        <p>Website licenses and contact info</p>
+        <div class="footer-columns">
+            <div class="footer-column">
+                <h3>¿Qué es gob.mx?</h3>
+                <p class="p-footer">Es el portal único de trámites, información y participación ciudadana. Leer más</p>
+            </div>
+            <div class="footer-column">
+                <h3>Denuncia contra servidores públicos</h3>
+                <p class="p-footer">Síguenos en Facebook</p>
+            </div>
+        </div>
     </footer>
 </body>
 
