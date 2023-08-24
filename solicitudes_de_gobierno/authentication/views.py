@@ -21,11 +21,14 @@ def loginView(request):
                 'id': usuario.id,
                 'nombre': usuario.nombre,
                 'apellido': usuario.apellido,
-                'tipo_de_usuario': usuario.tipo_de_usuario.id
+                'tipo_de_usuario': usuario.tipo_de_usuario.id,
+                'activo': True
             }
             request.session['usuario_data'] = json.dumps(usuario_data)
 
-            return redirect('landing-page')
+            print(request.session['usuario_data'])
+
+            return redirect('landing-page')                
 
         else:
             return render(request, 'login.html', {'res': "El correo o la contraseña son incorrectos."})
