@@ -19,9 +19,8 @@ def misSolicitudesView(request):
     if usuario == None:
         return redirect('authentication:login')
 
-    # Query user solicitudes
-    sample_user_id = 1
-    solicitudes = getSolicitudesDeUsuario(sample_user_id)
+    # Consulta solicitudes de usuario
+    solicitudes = getSolicitudesDeUsuario(usuario['id'])
 
     if solicitudes['data'] != None:
         for solicitud in solicitudes['data']:
@@ -65,9 +64,15 @@ def solicitudView(request, solicitud_id, usuario=None):
 
         return render(request, 'solicitud-individual.html', context=context)
 
-    # Cuando no ha iniciado sesión
+    # Cuando no ha iniciado sesión o no se requiere iniciar sesión
     else: 
-        return render(request, 'solicitud-individual-ajena.html', context=context)
+        # No requiere sesión, pero está conectado
+        try: 
+            context['usuario'] = json.loads(request.session['usuario_data'])
+            return render(request, 'solicitud-individual-ajena.html', context=context)
+
+        except:
+            return render(request, 'solicitud-individual-ajena.html', context=context)
     
 
 # View intermedia para ver, borrar o actualizar una soicitud individual
@@ -89,7 +94,7 @@ def gestionarSolicitud(request, solicitud_id=None):
         if login_required == True:
             response = solicitudView(request, solicitud_id, usuario)
 
-        else: 
+        else:
             response = solicitudView(request, solicitud_id)
 
     if request.method == 'DELETE':
