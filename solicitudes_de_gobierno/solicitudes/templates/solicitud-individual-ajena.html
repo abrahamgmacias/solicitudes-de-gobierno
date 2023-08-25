@@ -227,8 +227,43 @@
         font-weight: bold;
     }
 
-    .container {
-        margin-bottom: 20px;
+
+
+    .status-dropdown {
+        position: relative;
+        display: inline-block;
+        cursor: pointer;
+    }
+
+    .current-status {
+        padding: 10px;
+        background-color: #f1f1f1;
+        border-radius: 10px;
+        border: 1px solid #ccc;
+        padding: 10px;
+        border-radius: 10px;
+        font-weight: bold;
+        align-items: center;
+    }
+
+    .status-options {
+        position: absolute;
+        display: none;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+        box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .status-options li {
+        padding: 10px;
+        border-bottom: 1px solid #ccc;
+    }
+
+    .status-dropdown.show .status-options {
+        display: block;
     }
 </style>
 
@@ -279,7 +314,6 @@
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    // 'X-CSRFToken': getCookie('csrftoken') // 
                     'X-CSRFToken': csrfToken
 
                 },
@@ -294,22 +328,46 @@
                     alert('Ocurrió un error intentando publicar el comentario. Inténtelo más tarde.');
                 });
         });
-
-        // function getCookie(name) {
-        //     var cookieValue = null;
-        //     if (document.cookie && document.cookie !== '') {
-        //         var cookies = document.cookie.split(';');
-        //         for (var i = 0; i < cookies.length; i++) {
-        //             var cookie = cookies[i].trim();
-        //             if (cookie.substring(0, name.length + 1) === (name + '=')) {
-        //                 cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-        //                 break;
-        //             }
-        //         }
-        //     }
-        //     return cookieValue;
-        // }
     });
+
+    // Permite actualizar el estatus cuando el usuario es un servidor
+    document.addEventListener('DOMContentLoaded', function () {
+        const statusDropdown = document.querySelector('.status-dropdown');
+        const currentStatus = statusDropdown.querySelector('.current-status');
+        const statusOptions = statusDropdown.querySelector('.status-options');
+
+        const prevStatus = currentStatus.textContent;
+        console.log(prevStatus)
+
+        statusDropdown.addEventListener('click', () => {
+            statusDropdown.classList.toggle('show');
+        });
+
+        statusOptions.addEventListener('click', (event) => {
+            if (event.target.tagName === 'LI') {
+                currentStatus.textContent = `Nuevo estatus: ${event.target.textContent}`;
+                statusDropdown.classList.remove('show');
+            }
+        });
+
+        document.addEventListener('click', (event) => {
+            if (!statusDropdown.contains(event.target)) {
+                const newStatus = currentStatus.textContent;
+
+                if (prevStatus != newStatus) {
+                    const dataKey = 'estatus';
+                    const statusId = event.target.dataset.id;
+                    var jsonObject = {};
+                    jsonObject[dataKey] = statusId;
+
+                    // MISSING POST
+                }
+
+                statusDropdown.classList.remove('show');
+            }
+        });
+    });
+
 </script>
 
 <!-- Informacion -->
@@ -333,7 +391,18 @@
         {% endif %}
         {% endif %}
         {% endfor %}
+        {% if usuario.tipo_de_usuario == 2 %}
+        <div class="status-dropdown">
+            <div class="current-status">Estatus actual: {{current_step}}</div>
+            <ul class="status-options">
+                {% for value in estatus %}
+                <li data-id="{{value.id}}">{{ value.nombre }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
     </div>
+
 </div>
 
 <!-- Historial -->

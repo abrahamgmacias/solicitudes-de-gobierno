@@ -9,7 +9,7 @@ from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from usuarios.views import validarExistenciaUsuario, getDataUsuario
 from authentication.views import checkUsuarioLoggedIn
-from .models import Solicitud, HistorialDeSolicitud, Comentario
+from .models import Solicitud, HistorialDeSolicitud, Comentario, Estatus
 
 
 # View para revisar mis solicitudes como usuario
@@ -69,11 +69,23 @@ def solicitudView(request, solicitud_id, usuario=None):
         # No requiere sesión, pero está conectado
         try: 
             context['usuario'] = json.loads(request.session['usuario_data'])
+
+            if context['usuario']['tipo_de_usuario'] == 2:
+                estatuses = getEstatuses()
+                context['estatus'] = estatuses['data']
+ 
             return render(request, 'solicitud-individual-ajena.html', context=context)
 
         except:
             return render(request, 'solicitud-individual-ajena.html', context=context)
     
+
+def getEstatuses():
+    estatuses = Estatus.objects.filter(activo=True)
+    estatuses_data = list(estatuses.values('id', 'nombre'))
+
+    return {'res': "Se encontraron los valores correspondientes", 'data': estatuses_data}
+
 
 # View intermedia para ver, borrar o actualizar una soicitud individual
 def gestionarSolicitud(request, solicitud_id=None):
