@@ -200,20 +200,8 @@
         });
     </script>
 
-    <header>
-        <a href="{% url 'landing-page' %}">
-            <h1>Gobierno de Mexico</h1>
-        </a>
-        <div class="buttons">
-            <a href="{% url 'authentication:login' %}" class="styled-button">
-                Iniciar sesión
-            </a>
-            <button class="styled-button">Registrar</button>
-            <a href="{% url 'authentication:logout' %}" class="styled-button">
-                Cerrar sesión
-            </a>
-        </div>
-    </header>
+    {% block header %}
+    {% endblock %}
 
     <div class="content-box">
         {% block content %}{% endblock %}

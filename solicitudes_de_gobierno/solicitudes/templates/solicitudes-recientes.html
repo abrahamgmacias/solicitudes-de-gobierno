@@ -2,6 +2,29 @@
 
 {% block title %}Opciones{% endblock %}
 
+{% block header %}
+<header>
+    <a href="{% url 'landing-page' %}">
+        <h1>Gobierno de Mexico</h1>
+    </a>
+
+    {% if usuario %}
+    <div class="buttons">
+        <a href="{% url 'authentication:logout' %}" class="styled-button">
+            Cerrar sesión
+        </a>
+    </div>
+    {% else %}
+    <div class="buttons">
+        <a href="{% url 'authentication:login' %}" class="styled-button">
+            Iniciar sesión
+        </a>
+        <button class="styled-button">Registrar</button>
+    </div>
+    {% endif %}
+</header>
+{% endblock %}
+
 {% block content %}
 <style>
     .solicitudes-locales {

@@ -1,5 +1,13 @@
 {% extends "base.html" %}
 
+{% block header %}
+<header>
+    <a href="{% url 'landing-page' %}">
+        <h1>Gobierno de Mexico</h1>
+    </a>
+</header>
+{% endblock %}
+
 {% block title %}Login{% endblock %}
 
 {% block content %}
@@ -12,7 +20,7 @@
         padding: 20px;
         width: 300px;
         text-align: center;
-        margin-bottom: 250px;
+        margin-bottom: 180px;
     }
 
     .login-form {
@@ -63,7 +71,7 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        min-height: 50vh;
+        margin-bottom: 0px;
     }
 
     .forgot-password {
@@ -74,6 +82,10 @@
     .error {
         color: rgb(102, 0, 0);
         font-weight: bold;
+    }
+
+    footer {
+        margin-top: 0px;
     }
 </style>
 

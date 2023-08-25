@@ -20,13 +20,21 @@ def misSolicitudesView(request):
         return redirect('authentication:login')
 
     # Consulta solicitudes de usuario
-    solicitudes = getSolicitudesDeUsuario(usuario['id'])
+    solicitudes = getSolicitudesDeUsuario(usuario['id'])    
 
+    context = {}
     if solicitudes['data'] != None:
         for solicitud in solicitudes['data']:
             solicitud['titulo'] = formatTituloSolicitud(solicitud)
+
+        context['solicitudes'] = solicitudes['data']
     
-    return render(request, 'solicitudes.html', {'res': solicitudes['res'], 'solicitudes': solicitudes['data']})
+    try:
+        context['usuario'] = json.loads(request.session['usuario_data'])
+        return render(request, 'solicitudes.html', context=context)
+
+    except:
+        return render(request, 'solicitudes.html', {'res': solicitudes['res'], 'solicitudes': solicitudes['data']})
 
 
 # View para visualizar la información de una solicitud
@@ -52,6 +60,12 @@ def solicitudView(request, solicitud_id, usuario=None):
             'comentarios': comentarios,
             }
 
+        try:
+            context['usuario'] = json.loads(request.session['usuario_data'])
+
+        except:
+            pass
+
     # No existe 
     else: 
         return render(request, 'missing-solicitud-individual.html')
@@ -68,8 +82,6 @@ def solicitudView(request, solicitud_id, usuario=None):
     else: 
         # No requiere sesión, pero está conectado
         try: 
-            context['usuario'] = json.loads(request.session['usuario_data'])
-
             if context['usuario']['tipo_de_usuario'] == 2:
                 estatuses = getEstatuses()
                 context['estatus'] = estatuses['data']
@@ -163,6 +175,12 @@ def registrarSolicitudView(request):
     if usuario == None:
         return redirect('authentication:login')
 
+    context = {}
+    try:
+        context['usuario'] = json.loads(request.session['usuario_data'])
+    except: 
+        pass
+
     if request.method == 'POST':
         form = SolicitudForm(request.POST)
         form.usuario = 1
@@ -176,7 +194,9 @@ def registrarSolicitudView(request):
     if request.method == 'GET':
         form = SolicitudForm()
 
-    return render(request, 'registrar-solicitud.html', {'form': form})
+    context['form'] = form
+
+    return render(request, 'registrar-solicitud.html', context=context)
 
 
 # View para visualizar las últimas solicitudes en tu zona
@@ -199,7 +219,12 @@ def explorarSolicitudesView(request):
             'res': solicitudes['res']
             }
 
-        return render(request, 'solicitudes-recientes.html', context=context )
+        try: 
+            context['usuario'] = json.loads(request.session['usuario_data'])
+            return render(request, 'solicitudes-recientes.html', context=context )
+
+        except: 
+            return render(request, 'solicitudes-recientes.html', context=context )
 
 
 # Utilizada para guardar la localización en el cache
