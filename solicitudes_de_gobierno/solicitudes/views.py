@@ -210,14 +210,22 @@ def explorarSolicitudesView(request):
             'activo': True
         })
 
+        solicitudes_recientes = getSolicitudesRecientes()
+        context = {
+            'res': solicitudes['res']   
+        }
+
         if solicitudes['data'] != None:
             for solicitud in solicitudes['data']:
                 solicitud['titulo'] = formatTituloSolicitud(solicitud)
 
-        context = { 
-            'solicitudes': solicitudes['data'],
-            'res': solicitudes['res']
-            }
+            context['solicitudes'] = solicitudes['data']
+
+        if solicitudes_recientes['data'] != None:
+            for solicitud in solicitudes_recientes['data']:
+                solicitud['titulo'] = formatTituloSolicitud(solicitud)
+
+            context['solicitudes_recientes'] = solicitudes_recientes['data']
 
         try: 
             context['usuario'] = json.loads(request.session['usuario_data'])
@@ -225,6 +233,22 @@ def explorarSolicitudesView(request):
 
         except: 
             return render(request, 'solicitudes-recientes.html', context=context )
+
+
+def getSolicitudesRecientes():
+    solicitudesRecientes = Solicitud.objects.select_related('accion', 'espacio', 'prioridad').order_by('-id')[:5]
+
+    solicitudesRecientes_data = list(solicitudesRecientes.values(
+                'id', 'informacion_adicional', 'direccion', 'estado', 'municipio_ciudad', 'codigo_postal', 
+                'accion', 'espacio', 'prioridad', 'fecha_de_creacion'
+            ))
+
+    for solicitud_instance, solicitud_data in zip(solicitudesRecientes, solicitudesRecientes_data):
+        solicitud_data["accion"] = solicitud_instance.accion.nombre
+        solicitud_data["espacio"] = solicitud_instance.espacio.nombre
+        solicitud_data["prioridad"] = solicitud_instance.prioridad.nombre
+
+    return {"res": "Aquí están las cinco últimas solicitudes.", "data": solicitudesRecientes_data}
 
 
 # Utilizada para guardar la localización en el cache
