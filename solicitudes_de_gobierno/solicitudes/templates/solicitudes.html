@@ -67,6 +67,8 @@
 {% endif %}
 
 <div class="d-flex justify-content-end">
-    <button type="submit" class="btn btn-primary rounded-pill" id="registrarButton">Registrar</button>
+    <a href="{% url 'solicitudes:registrar-solicitud'%}">
+        <button type=" submit" class="btn btn-primary rounded-pill" id="registrarButton">Registrar</button>
+    </a>
 </div>
 {% endblock %}
