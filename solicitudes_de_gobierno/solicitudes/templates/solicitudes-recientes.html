@@ -66,6 +66,21 @@
 </ul>
 {% endif %}
 
+<p>Otras solicitudes recientes en la república...</p>
+{% if solicitudes_recientes is not None %}
+<ul>
+    {% for solicitud in solicitudes_recientes %}
+    <div class="list-container">
+        <li>
+            <a href="{% url 'solicitudes:explorar-solicitud' solicitud_id=solicitud.id %}?login_required=False">
+                {{ solicitud.titulo }}
+            </a>
+        </li>
+    </div>
+    {% endfor %}
+</ul>
+{% endif %}
+
 <div class="d-flex justify-content-end">
     <button type="submit" class="btn btn-primary rounded-pill" id="registrarButton">Registrar</button>
 </div>
