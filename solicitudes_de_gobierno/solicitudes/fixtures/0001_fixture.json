@@ -44,6 +44,20 @@
         }
     },
     {
+        "model": "usuarios.usuario",
+        "pk": 3,
+        "fields": {
+            "nombre": "Juan",
+            "apellido": "Chavez",
+            "fecha_de_nacimiento": "1995-03-10",
+            "tipo_de_usuario": 1,
+            "correo_electronico": "jchavez@outlook.com",
+            "contrasena": "sabesonosabes",
+            "municipio_ciudad": "Chihuahua",
+            "estado": "Chihuahua"
+        }
+    },
+    {
         "model": "solicitudes.accion",
         "pk": 1,
         "fields": {
@@ -180,6 +194,207 @@
         "pk": 3,
         "fields": {
             "nombre": "Alta"
+        }
+    },
+    {
+        "model": "solicitudes.solicitud",
+        "pk": 1,
+        "fields": {
+            "informacion_adicional": "Frente a un parque, edificios naranja",
+            "direccion": "Villa de Polux 5610",
+            "estado": "Chihuahua",
+            "municipio_ciudad": "Chihuahua",
+            "codigo_postal": 31124,
+            "accion_id": 4,
+            "espacio_id": 6,
+            "prioridad_id": 2,
+            "usuario_id": 3
+        }
+    },
+    {
+        "model": "solicitudes.solicitud",
+        "pk": 2,
+        "fields": {
+            "informacion_adicional": "El agua está corriendo por toda la calle.",
+            "direccion": "Ortiz Mena #4568",
+            "estado": "Chihuahua",
+            "municipio_ciudad": "Chihuahua",
+            "codigo_postal": 32114,
+            "accion_id": 1,
+            "espacio_id": 3,
+            "prioridad_id": 3,
+            "usuario_id": 2
+        }
+    },
+    {
+        "model": "solicitudes.solicitud",
+        "pk": 3,
+        "fields": {
+            "informacion_adicional": "Las banquetas están todas rotas.",
+            "direccion": "Villa de Polux 5610",
+            "estado": "Sonora",
+            "municipio_ciudad": "Hermosillo",
+            "codigo_postal": 83160,
+            "accion_id": 2,
+            "espacio_id": 5,
+            "prioridad_id": 2,
+            "usuario_id": 3
+        }
+    },
+    {
+        "model": "solicitudes.solicitud",
+        "pk": 4,
+        "fields": {
+            "informacion_adicional": "Los parques están llenos de basura y ratas.",
+            "direccion": "Blvd. Lopez Portillo #412",
+            "estado": "Chihuahua",
+            "municipio_ciudad": "Sonora",
+            "codigo_postal": 35612,
+            "accion_id": 4,
+            "espacio_id": 4,
+            "prioridad_id": 3,
+            "usuario_id": 3
+        }
+    },
+    {
+        "model": "solicitudes.solicitud",
+        "pk": 5,
+        "fields": {
+            "informacion_adicional": "Hay muchos baches, se ponchan las llantas.",
+            "direccion": "Blvd. Lopez Portillo #412",
+            "estado": "Sonora",
+            "municipio_ciudad": "Hermosillo",
+            "codigo_postal": 83140,
+            "accion_id": 1,
+            "espacio_id": 1,
+            "prioridad_id": 3,
+            "usuario_id": 2
+        }
+    },
+    {
+        "model": "solicitudes.historialdesolicitud",
+        "pk": 1,
+        "fields": {
+            "estatus_id": 1,
+            "solicitud_id": 1
+        }
+    },
+    {
+        "model": "solicitudes.historialdesolicitud",
+        "pk": 2,
+        "fields": {
+            "estatus_id": 2,
+            "solicitud_id": 1
+        }
+    },
+    {
+        "model": "solicitudes.historialdesolicitud",
+        "pk": 3,
+        "fields": {
+            "estatus_id": 1,
+            "solicitud_id": 2
+        }
+    },
+    {
+        "model": "solicitudes.historialdesolicitud",
+        "pk": 4,
+        "fields": {
+            "estatus_id": 1,
+            "solicitud_id": 3
+        }
+    },
+    {
+        "model": "solicitudes.historialdesolicitud",
+        "pk": 5,
+        "fields": {
+            "estatus_id": 2,
+            "solicitud_id": 3
+        }
+    },
+    {
+        "model": "solicitudes.historialdesolicitud",
+        "pk": 6,
+        "fields": {
+            "estatus_id": 4,
+            "solicitud_id": 3
+        }
+    },
+    {
+        "model": "solicitudes.historialdesolicitud",
+        "pk": 7,
+        "fields": {
+            "estatus_id": 1,
+            "solicitud_id": 4
+        }
+    },
+    {
+        "model": "solicitudes.historialdesolicitud",
+        "pk": 8,
+        "fields": {
+            "estatus_id": 2,
+            "solicitud_id": 4
+        }
+    },
+    {
+        "model": "solicitudes.historialdesolicitud",
+        "pk": 9,
+        "fields": {
+            "estatus_id": 1,
+            "solicitud_id": 5
+        }
+    },
+    {
+        "model": "solicitudes.comentario",
+        "pk": 2,
+        "fields": {
+            "texto": "La información se ve válida. Esperando confirmación.",
+            "solicitud_id": 1,
+            "usuario_id": 2
+        }
+    },
+    {
+        "model": "solicitudes.comentario",
+        "pk": 1,
+        "fields": {
+            "texto": "Alguién va a atender esto????",
+            "solicitud_id": 1,
+            "usuario_id": 1
+        }
+    },
+    {
+        "model": "solicitudes.comentario",
+        "pk": 3,
+        "fields": {
+            "texto": "Lleva dos días saliendo el agua y nadie hace nada!",
+            "solicitud_id": 2,
+            "usuario_id": 3
+        }
+    },
+    {
+        "model": "solicitudes.comentario",
+        "pk": 4,
+        "fields": {
+            "texto": "Aprobado, se ha enviado equipo para darle mantenimiento.",
+            "solicitud_id": 3,
+            "usuario_id": 1
+        }
+    },
+    {
+        "model": "solicitudes.comentario",
+        "pk": 5,
+        "fields": {
+            "texto": "Estamos organizando un grupo de barrenderos. Espere un momento.",
+            "solicitud_id": 4,
+            "usuario_id": 1
+        }
+    },
+    {
+        "model": "solicitudes.comentario",
+        "pk": 6,
+        "fields": {
+            "texto": "Por favor arreglen esto, ya van dos veces que me poncho!!!!",
+            "solicitud_id": 5,
+            "usuario_id": 2
         }
     }
 ]
